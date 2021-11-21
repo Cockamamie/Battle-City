@@ -24,17 +24,23 @@ class SpritesCreator:
         self.base = self.assets_path + '\\Base\\'
 
     def eagle(self):
-        return image.load(f'{self.base}eagle.png')
+        return image.load(f'{self.base}eagle.png').convert_alpha()
 
     def flag(self):
-        return image.load(f'{self.base}flag.png')
+        return image.load(f'{self.base}flag.png').convert_alpha()
 
     @staticmethod
-    def create_tank_dict(folder: str, img_prefix: str) -> dict:
-        return {Direction.Up: image.load(f'{folder}{img_prefix}_up.png'),
-                Direction.Down: image.load(f'{folder}{img_prefix}_down.png'),
-                Direction.Right: image.load(f'{folder}{img_prefix}_right.png'),
-                Direction.Left: image.load(f'{folder}{img_prefix}_left.png')}
+    def convert_dict_alpha(images: dict) -> dict:
+        for key in images.keys():
+            images[key] = images[key].convert_alpha()
+        return images
+
+    def create_tank_dict(self, folder: str, img_prefix: str) -> dict:
+        return self.convert_dict_alpha(
+            {Direction.Up: image.load(f'{folder}{img_prefix}_up.png'),
+             Direction.Down: image.load(f'{folder}{img_prefix}_down.png'),
+             Direction.Right: image.load(f'{folder}{img_prefix}_right.png'),
+             Direction.Left: image.load(f'{folder}{img_prefix}_left.png')})
 
     def no_stars_player(self) -> dict:
         return self.create_tank_dict(self.player, 'no_stars')
