@@ -1,17 +1,13 @@
 import pygame
 
 from player import Player
+from directions import Direction
 
 
 class Game:
     def __init__(self, width, height):
         self.width = width
         self.height = height
-
-    @staticmethod
-    def get_sprites():  # 26 x 26
-        sprites = pygame.image.load('Sprites/Graphics/Tanks.png').convert_alpha()
-        return sprites
 
     def run(self):
         pygame.init()

@@ -1,4 +1,4 @@
-from Sprites.sprites import SpritesCreator
+from Assets.sprites import SpritesCreator
 from directions import Direction
 
 
@@ -18,3 +18,4 @@ class Player:
         delta_pos = [delta * self.velocity for delta in direction.value]
         self.position = tuple([x + y for x, y in zip(self.position, delta_pos)])
         self.image = self.no_stars[direction]
+    
