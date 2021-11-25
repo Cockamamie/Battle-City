@@ -1,33 +1,47 @@
+import pygame.sprite
 from pygame import Rect
+from typing import Tuple
+
 from interfaces import MapObject
 from Assets.sprites import SpritesCreator
 
 
-class Brick(MapObject):
-    def __init__(self, position: tuple[int, int]):
+class Brick(MapObject, pygame.sprite.Sprite):
+    def __init__(self, rect):
+        pygame.sprite.Sprite.__init__(self)
         self.image = SpritesCreator().brick()
-        self.rect = self.image.get_rect()
+        self.rect = rect
 
 
-class Steel(MapObject):
-    def __init__(self, position: tuple[int, int]):
+class Steel(MapObject, pygame.sprite.Sprite):
+    def __init__(self, rect):
+        pygame.sprite.Sprite.__init__(self)
         self.image = SpritesCreator().steel()
-        self.rect = self.image.get_rect()
+        self.rect = rect
 
 
-class Grass(MapObject):
-    def __init__(self, position: tuple[int, int]):
+class Grass(MapObject, pygame.sprite.Sprite):
+    def __init__(self, rect):
+        pygame.sprite.Sprite.__init__(self)
         self.image = SpritesCreator().grass()
-        self.rect = self.image.get_rect()
+        self.rect = rect
 
 
-class Water(MapObject):
-    def __init__(self, position: tuple[int, int]):
-        self.image = SpritesCreator().water()
-        self.rect = self.image.get_rect()
+class Water(MapObject, pygame.sprite.Sprite):
+    def __init__(self, rect):
+        pygame.sprite.Sprite.__init__(self)
+        self.image = SpritesCreator().water()[0]
+        self.rect = rect
 
 
-class Ice(MapObject):
-    def __init__(self, position: tuple[int, int]):
+class Ice(MapObject, pygame.sprite.Sprite):
+    def __init__(self, rect):
+        pygame.sprite.Sprite.__init__(self)
         self.image = SpritesCreator().ice()
-        self.rect = self.image.get_rect()
+        self.rect = rect
+
+
+class Empty(MapObject, pygame.sprite.Sprite):
+    def __init__(self, rect):
+        pygame.sprite.Sprite.__init__(self)
+        self.rect = rect
