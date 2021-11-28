@@ -2,6 +2,8 @@ from enums import Direction
 from bullet import Bullet
 from pygame import Rect
 
+width = height = 32
+
 
 class Tank:
     def __init__(self, health: int = 100, velocity: int = 2, shouting_speed: int = 2,
@@ -15,6 +17,7 @@ class Tank:
         self._is_player = is_player
         self._images = images
         self._image = images[direction]
+        self._rect = self.image.get_rect()
         self.max_bullets_available = 1
 
     @property
@@ -41,25 +44,43 @@ class Tank:
     @property
     def image(self): return self._image
 
+    @property
+    def rect(self): return self._rect
+
     def move(self, direction: Direction, obstacles, enemies=None, bonuses=None):
         previous_pos = self.position
         delta_pos = [delta * self.velocity for delta in direction.value]
-        self._position = tuple([x + y for x, y in zip(self.position, delta_pos)])
-        rect = Rect(self.position, (32, 32))
-        is_moving_possible = rect.collidelist(obstacles) != -1 and not\
-            (0 <= self.position[0] < 385 and 0 <= self.position[1] < 385)
-        if not is_moving_possible:
+        self._position = [x + y for x, y in zip(self.position, delta_pos)]
+        intersecting_index = Rect.collidelist(Rect(self.position, (32, 32)), obstacles)
+        allowable_shift = 3 / 8 * width + 1
+        if intersecting_index != -1:
+            intersecting_rect = obstacles[intersecting_index]
             self._position = previous_pos
-        # for bonus in bonuses:
-        #     if rect.colliderect(bonus.rect):
-        #         self.bonus = bonus
+            if intersecting_rect.x + intersecting_rect.width - self.position[0] < allowable_shift \
+                    and intersecting_rect.y + intersecting_rect.height - self.position[1] < allowable_shift:
+                self._position = [intersecting_rect.x + intersecting_rect.width,
+                                  intersecting_rect.y + intersecting_rect.height]
+            elif self.position[0] + self.rect.width - intersecting_rect.x < allowable_shift \
+                    and intersecting_rect.y + intersecting_rect.height - self.position[1] < allowable_shift:
+                self._position = [intersecting_rect.x - self.rect.width,
+                                  intersecting_rect.y + intersecting_rect.height]
+            elif intersecting_rect.x + intersecting_rect.width - self.position[0] < allowable_shift \
+                    and self.position[1] + self.rect.height - intersecting_rect.y < allowable_shift:
+                self._position = [intersecting_rect.x + intersecting_rect.width,
+                                  intersecting_rect.y - self.rect.height]
+            elif self.position[0] + self.rect.width - intersecting_rect.x < allowable_shift \
+                    and self.position[1] + self.rect.height - intersecting_rect.y < allowable_shift:
+                self._position = [intersecting_rect.x - self.rect.width,
+                                  intersecting_rect.y - self.rect.height]
+            else:
+                self._position = previous_pos
+        if not (0 <= self.position[0] < 385 and 0 <= self.position[1] < 385):
+            self._position = previous_pos
         self._direction = direction
         self._image = self.images[direction]
 
     def shoot(self, bullets: list[Bullet]):
         bullet_width = bullet_height = 8
-        width = self.image.get_width()
-        height = self.image.get_height()
         bullet_pos_shift = {Direction.Up: ((width - bullet_width) // 2, 0),
                             Direction.Right: (width, (height - bullet_height) // 2),
                             Direction.Down: ((width - bullet_width) // 2, height),
