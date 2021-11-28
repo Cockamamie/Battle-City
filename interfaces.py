@@ -1,4 +1,5 @@
 from abc import ABCMeta, abstractmethod
+from pygame import Rect
 
 
 class EnemyTank:
@@ -23,4 +24,6 @@ class EnemyTank:
 
 class MapObject:
     __metaclass__ = ABCMeta
-    
+
+    @abstractmethod
+    def __init__(self, rect: Rect): pass

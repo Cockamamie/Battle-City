@@ -11,6 +11,8 @@ upper = pygame.sprite.Group()
 
 obstacles = []
 empty_tiles = []
+bullets = []
+clock = pygame.time.Clock()
 
 
 class Game:
@@ -22,7 +24,6 @@ class Game:
         pygame.init()
         window = pygame.display.set_mode((self.width, self.height))
         pygame.display.set_caption("Battle City")
-        player = Player((0, 0))
         level_1 = Level(1).map
         for tile in level_1:
             if isinstance(tile, landscape.Empty):
@@ -37,6 +38,7 @@ class Game:
                 obstacles.append(tile.rect)
                 medium.add(tile)
         current_direction = Direction.Down
+        player = Player()
         run = True
         while run:
             window.fill((0, 0, 0))
@@ -68,6 +70,13 @@ class Game:
             elif keys[pygame.K_DOWN]:
                 player.move(Direction.Down, obstacles)
                 current_direction = Direction.Down
+            for bullet in bullets:
+                window.blit(bullet.image, bullet.position)
+                bullet.move()
+
+            if keys[pygame.K_SPACE]:
+                player.shoot(bullets)
             pygame.display.update()
+            clock.tick(60)
         pygame.quit()
         quit()

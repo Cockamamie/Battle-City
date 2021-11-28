@@ -17,6 +17,7 @@ class MapCreator:
 
     def __init__(self, level_number: int):
         levels_path = str(Path(Path.cwd(), 'Levels'))
+        self.level_path = levels_path + f'\\{level_number}.txt'
 
     def create_map(self, tile_size=16) -> list:
         lvl_map: List[MapObject] = []
