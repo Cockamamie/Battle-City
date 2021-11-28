@@ -1,61 +1,33 @@
-from interfaces import EnemyTank
+from tank import Tank
 
 
-class CommonTank(EnemyTank):
-
-    @property
-    def health(self): return 1
-
-    @property
-    def velocity(self): return 1
-
-    @property
-    def shouting_speed(self): return 1
+class CommonTank(Tank):
+    def __init__(self, is_bonus: bool = False):
+        super().__init__(velocity=1)
 
     @property
     def points(self): return 100
 
 
-class FastTank(EnemyTank):
-
-    @property
-    def health(self): return 1
-
-    @property
-    def velocity(self): return 3
-
-    @property
-    def shouting_speed(self): return 2
+class FastTank(Tank):
+    def __init__(self, is_bonus: bool = False):
+        super().__init__(velocity=3)
 
     @property
     def points(self): return 200
 
 
-class RapidFireTank(EnemyTank):
-
-    @property
-    def health(self): return 1
-
-    @property
-    def velocity(self): return 2
-
-    @property
-    def shouting_speed(self): return 3
+class RapidFireTank(Tank):
+    def __init__(self, is_bonus: bool = False):
+        super().__init__(shouting_speed=3)
 
     @property
     def points(self): return 300
 
 
-class ArmoredTank(EnemyTank):
-
-    @property
-    def health(self): return 4
-
-    @property
-    def velocity(self): return 2
-
-    @property
-    def shouting_speed(self): return 2
+class ArmoredTank(Tank):
+    def __init__(self, is_bonus: bool = False):
+        super().__init__(health=400)
 
     @property
     def points(self): return 400
