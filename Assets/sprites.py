@@ -1,7 +1,6 @@
 from pygame import image, Surface
 from pathlib import Path
-from enums import Direction
-from enums import Color
+from enums import Direction, Color
 
 
 class SpritesCreator:
@@ -10,7 +9,7 @@ class SpritesCreator:
         self.player = self.assets_path + '\\PlayerTank\\'
         self.second_player = self.assets_path + '\\SecondPlayerTank\\'
         self.power_ups = self.assets_path + '\\PowerUps\\'
-        self.bullet = self.assets_path + '\\Bullet\\'
+        self.bullet_path = self.assets_path + '\\Bullet\\'
         self.blast = self.assets_path + '\\Blast\\'
         self.spawn = self.assets_path + '\\EnemySpawn\\'
         self.base = self.assets_path + '\\Base\\'
@@ -83,10 +82,10 @@ class SpritesCreator:
 
     def bullet(self) -> dict[Direction, Surface]:
         return self.convert_dict_alpha(
-            {Direction.Up: image.load(f'{self.bullet}up.png'),
-             Direction.Down: image.load(f'{self.bullet}down.png'),
-             Direction.Right: image.load(f'{self.bullet}right.png'),
-             Direction.Left: image.load(f'{self.bullet}left.png')})
+            {Direction.Up: image.load(f'{self.bullet_path}up.png'),
+             Direction.Down: image.load(f'{self.bullet_path}down.png'),
+             Direction.Right: image.load(f'{self.bullet_path}right.png'),
+             Direction.Left: image.load(f'{self.bullet_path}left.png')})
 
     def small_blast(self) -> Surface:
         return image.load(f'{self.blast}small.png').convert_alpha()
