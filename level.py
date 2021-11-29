@@ -4,8 +4,8 @@ from typing import List
 from pygame import Rect
 
 from interfaces import MapObject
-from landscape import Brick, Steel, Grass, Water, Ice, Empty
 from enemies import Common, Fast, RapidFire, Armored
+from landscape import Brick, Steel, Grass, Water, Ice
 
 
 class MapCreator:
@@ -13,8 +13,7 @@ class MapCreator:
                   'S': Steel,
                   'W': Water,
                   'G': Grass,
-                  'I': Ice,
-                  'E': Empty}
+                  'I': Ice}
 
     def __init__(self, level_number: int):
         levels_path = str(Path(Path.cwd(), 'Levels'))
@@ -27,7 +26,7 @@ class MapCreator:
                 for j, symbol in enumerate(line):
                     pos = (j * tile_size, i * tile_size)
                     rect = Rect(pos, (tile_size, tile_size))
-                    if symbol == '\n' or symbol == 'H':
+                    if symbol == '\n' or symbol == 'H' or symbol == 'E':
                         continue
                     map_object = self.block_dict[symbol](rect)
                     lvl_map.append(map_object)

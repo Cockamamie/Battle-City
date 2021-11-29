@@ -1,6 +1,7 @@
 from enums import Direction
 from bullet import Bullet
 from pygame import Rect, Surface
+
 width = height = 32
 
 
@@ -20,28 +21,36 @@ class Tank:
 
     # region Properties
     @property
-    def health(self): return self._health
+    def health(self):
+        return self._health
 
     @property
-    def velocity(self): return self._velocity
+    def velocity(self):
+        return self._velocity
 
     @property
-    def shouting_speed(self): return self._shouting_speed
+    def shouting_speed(self):
+        return self._shouting_speed
 
     @property
-    def direction(self): return self._direction
+    def direction(self):
+        return self._direction
 
     @property
-    def position(self): return self._position
+    def position(self):
+        return self._position
 
     @property
-    def is_player(self): return self._is_player
+    def is_player(self):
+        return self._is_player
 
     @property
-    def images(self): return self._images
+    def images(self):
+        return self._images
 
     @property
-    def image(self): return self._image
+    def image(self):
+        return self._image
 
     @property
     def rect(self): return self._rect
@@ -81,6 +90,9 @@ class Tank:
         self._position = tuple(self.__get_next_pos(direction, obstacles, enemies))
         self._direction = direction
         self._image = self.images[direction]
+
+    def take_damage(self, explosion_queue):
+        self._health -= 100
 
     def shoot(self, bullets: list[Bullet]):
         bullet_width = bullet_height = 8
