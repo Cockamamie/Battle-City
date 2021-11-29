@@ -1,14 +1,12 @@
 from enums import Direction
 from bullet import Bullet
-from pygame import Rect
-
+from pygame import Rect, Surface
 width = height = 32
 
 
 class Tank:
-    def __init__(self, health: int = 100, velocity: int = 2, shouting_speed: int = 2,
-                 direction: Direction = Direction.Down, position: tuple[int, int] = (0, 0),
-                 is_player: bool = False, images: dict[Direction, any] = None):
+    def __init__(self, images: dict[Direction, Surface], health=100, velocity=2,
+                 shouting_speed=2, direction=Direction.Down, position=(0, 0), is_player=False):
         self._health = health
         self._velocity = velocity
         self._shouting_speed = shouting_speed
@@ -20,6 +18,7 @@ class Tank:
         self._rect = self.image.get_rect()
         self.max_bullets_available = 1
 
+    # region Properties
     @property
     def health(self): return self._health
 
@@ -46,36 +45,40 @@ class Tank:
 
     @property
     def rect(self): return self._rect
+    # endregion
+
+    @staticmethod
+    def in_map_bounds(position):
+        return 0 <= position[0] < 385 and 0 <= position[1] < 385
+
+    def __get_next_pos(self, direction, obstacles, enemies):
+        delta_pos = [delta * self.velocity for delta in direction.value]
+        next_position = [x + y for x, y in zip(self.position, delta_pos)]
+        intersecting_index = Rect.collidelist(Rect(next_position, (32, 32)), obstacles)
+        if intersecting_index == -1 and self.in_map_bounds(next_position):
+            return next_position
+        position = self.position
+        if intersecting_index != -1:
+            max_allowable_shift = 3 / 8 * width + 1
+            intersecting_rect = obstacles[intersecting_index]
+            left_intersection = intersecting_rect.x + intersecting_rect.width - position[0]
+            above_intersection = intersecting_rect.y + intersecting_rect.height - position[1]
+            right_intersection = position[0] + self.rect.width - intersecting_rect.x
+            bot_intersection = position[1] + self.rect.height - intersecting_rect.y
+            x, y = position
+            if left_intersection < max_allowable_shift:
+                x = intersecting_rect.x + intersecting_rect.width
+            if right_intersection < max_allowable_shift:
+                x = intersecting_rect.x - self.rect.width
+            if above_intersection < max_allowable_shift:
+                y = intersecting_rect.y + intersecting_rect.height
+            if bot_intersection < max_allowable_shift:
+                y = intersecting_rect.y - self.rect.height
+            return [x, y]
+        return position
 
     def move(self, direction: Direction, obstacles, enemies=None, bonuses=None):
-        previous_pos = self.position
-        delta_pos = [delta * self.velocity for delta in direction.value]
-        self._position = [x + y for x, y in zip(self.position, delta_pos)]
-        intersecting_index = Rect.collidelist(Rect(self.position, (32, 32)), obstacles)
-        allowable_shift = 3 / 8 * width + 1
-        if intersecting_index != -1:
-            intersecting_rect = obstacles[intersecting_index]
-            self._position = previous_pos
-            if intersecting_rect.x + intersecting_rect.width - self.position[0] < allowable_shift \
-                    and intersecting_rect.y + intersecting_rect.height - self.position[1] < allowable_shift:
-                self._position = [intersecting_rect.x + intersecting_rect.width,
-                                  intersecting_rect.y + intersecting_rect.height]
-            elif self.position[0] + self.rect.width - intersecting_rect.x < allowable_shift \
-                    and intersecting_rect.y + intersecting_rect.height - self.position[1] < allowable_shift:
-                self._position = [intersecting_rect.x - self.rect.width,
-                                  intersecting_rect.y + intersecting_rect.height]
-            elif intersecting_rect.x + intersecting_rect.width - self.position[0] < allowable_shift \
-                    and self.position[1] + self.rect.height - intersecting_rect.y < allowable_shift:
-                self._position = [intersecting_rect.x + intersecting_rect.width,
-                                  intersecting_rect.y - self.rect.height]
-            elif self.position[0] + self.rect.width - intersecting_rect.x < allowable_shift \
-                    and self.position[1] + self.rect.height - intersecting_rect.y < allowable_shift:
-                self._position = [intersecting_rect.x - self.rect.width,
-                                  intersecting_rect.y - self.rect.height]
-            else:
-                self._position = previous_pos
-        if not (0 <= self.position[0] < 385 and 0 <= self.position[1] < 385):
-            self._position = previous_pos
+        self._position = tuple(self.__get_next_pos(direction, obstacles, enemies))
         self._direction = direction
         self._image = self.images[direction]
 
