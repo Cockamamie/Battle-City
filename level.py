@@ -5,6 +5,7 @@ from pygame import Rect
 
 from interfaces import MapObject
 from landscape import Brick, Steel, Grass, Water, Ice, Empty
+from enemies import Common, Fast, RapidFire, Armored
 
 
 class MapCreator:
@@ -31,6 +32,13 @@ class MapCreator:
                     map_object = self.block_dict[symbol](rect)
                     lvl_map.append(map_object)
         return lvl_map
+
+
+class EnemyQueueCreator:
+    enemies_queue = [18 * [Common]]
+
+    def generate_queue(self, level_num: int):
+        return self.enemies_queue[level_num - 1]
 
 
 class Level:
