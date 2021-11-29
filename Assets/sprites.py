@@ -52,19 +52,19 @@ class SpritesCreator:
                 image.load(f'{self.spawn}large.png').convert_alpha(),
                 image.load(f'{self.spawn}huge.png').convert_alpha()]
 
-    def common_enemy(self, color: Color) -> dict[Direction, Surface]:
+    def common_enemy(self, color: Color = Color.Gray) -> dict[Direction, Surface]:
         return self.create_tank_dict(self.assets_path +
                                      f'\\{color.value}Tank\\', 'common')
 
-    def fast_enemy(self, color: Color) -> dict[Direction, Surface]:
+    def fast_enemy(self, color: Color = Color.Gray) -> dict[Direction, Surface]:
         return self.create_tank_dict(self.assets_path +
                                      f'\\{color.value}Tank\\', 'fast')
 
-    def rapid_enemy(self, color: Color) -> dict[Direction, Surface]:
+    def rapid_enemy(self, color: Color = Color.Gray) -> dict[Direction, Surface]:
         return self.create_tank_dict(self.assets_path +
                                      f'\\{color.value}Tank\\', 'rapid')
 
-    def armored_enemy(self, color: Color) -> dict[Direction, Surface]:
+    def armored_enemy(self, color: Color = Color.Gray) -> dict[Direction, Surface]:
         return self.create_tank_dict(self.assets_path +
                                      f'\\{color.value}Tank\\', 'armored')
 
