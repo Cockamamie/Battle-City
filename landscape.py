@@ -1,6 +1,4 @@
 import pygame.sprite
-from pygame import Rect
-from typing import Tuple
 
 from interfaces import MapObject
 from Assets.sprites import SpritesCreator
