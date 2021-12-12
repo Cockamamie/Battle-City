@@ -1,4 +1,6 @@
 import pygame.sprite
+from pygame import Rect
+from typing import Tuple
 
 from interfaces import MapObject
 from Assets.sprites import SpritesCreator
@@ -10,18 +12,12 @@ class Brick(MapObject, pygame.sprite.Sprite):
         self.image = SpritesCreator().brick()
         self.rect = rect
 
-    def kill(self) -> None:
-        pygame.sprite.Sprite.kill(self)
-
 
 class Steel(MapObject, pygame.sprite.Sprite):
     def __init__(self, rect):
         pygame.sprite.Sprite.__init__(self)
         self.image = SpritesCreator().steel()
         self.rect = rect
-
-    def kill(self) -> None:
-        pygame.sprite.Sprite.kill(self)
 
 
 class Grass(MapObject, pygame.sprite.Sprite):
@@ -44,3 +40,8 @@ class Ice(MapObject, pygame.sprite.Sprite):
         self.image = SpritesCreator().ice()
         self.rect = rect
 
+
+class Empty(MapObject, pygame.sprite.Sprite):
+    def __init__(self, rect):
+        pygame.sprite.Sprite.__init__(self)
+        self.rect = rect

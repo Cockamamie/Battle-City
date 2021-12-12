@@ -10,9 +10,9 @@ medium = pygame.sprite.Group()
 upper = pygame.sprite.Group()
 
 obstacles = []
+empty_tiles = []
 bullets = []
 enemies = []
-explosion_queue = [[] for i in range(4)]
 clock = pygame.time.Clock()
 
 
@@ -74,12 +74,16 @@ class Game:
         game_helper = GameHelper(1)
         level_1 = Level(1).map
         for tile in level_1:
-            if isinstance(tile, landscape.Grass):
+            if isinstance(tile, landscape.Empty):
+                empty_tiles.append(tile.rect)
+            elif isinstance(tile, landscape.Grass):
                 upper.add(tile)
-            elif isinstance(tile, landscape.Ice):
+            elif isinstance(tile, (landscape.Ice, landscape.Water)):
+                if isinstance(tile, landscape.Water):
+                    obstacles.append(tile.rect)
                 lower.add(tile)
             else:
-                obstacles.append(tile)
+                obstacles.append(tile.rect)
                 medium.add(tile)
         current_direction = Direction.Down
         player = Player()
@@ -93,22 +97,15 @@ class Game:
             window.blit(player.image, player.position)
             medium.draw(window)
             upper.draw(window)
-
             game_helper.spawn_enemies()
-
             for bullet in bullets:
                 window.blit(bullet.image, bullet.position)
-                bullet.move(obstacles, enemies, bullets, explosion_queue)
+                bullet.move()
 
             for enemy in enemies:
                 enemy.step(obstacles, bullets)
                 window.blit(enemy.image, enemy.position)
             current_direction = self.on_player_key_pressed(player, current_direction)
-
-            for i in explosion_queue[0]:
-                window.blit(i[0], i[1])
-            del explosion_queue[0]
-            explosion_queue.append([])
 
             pygame.display.update()
             clock.tick(60)
