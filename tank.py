@@ -70,6 +70,7 @@ class Tank:
         if intersecting_index != -1:
             max_allowable_shift = 3 / 8 * width + 1
             intersecting_rect = obstacles[intersecting_index]
+            intersecting_rect = obstacles[intersecting_index].rect
             left_intersection = intersecting_rect.x + intersecting_rect.width - position[0]
             above_intersection = intersecting_rect.y + intersecting_rect.height - position[1]
             right_intersection = position[0] + self.rect.width - intersecting_rect.x
