@@ -83,7 +83,7 @@ class Bullet:
         if intersecting_obs_index + intersecting_bull_index + intersecting_tanks_index != -3 or \
                 not (0 <= self.position[0] < 409 and 0 <= self.position[1] < 409):
             for i in range(len(bullets)):
-                if bullets[i].belongs_player:
+                if self.rect == bullets[i].rect:
                     del bullets[i]
                     break
             if blow_up_bullet:
