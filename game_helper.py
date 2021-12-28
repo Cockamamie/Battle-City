@@ -18,7 +18,7 @@ class MapCreator:
 
     def __init__(self, level_number: int):
         levels_path = str(Path(Path.cwd(), 'Levels'))
-        self.level_path = levels_path + f'\\{level_number}.txt'
+        self.level_path = levels_path + f'/{level_number}.txt'
 
     def create_map(self, tile_size=16) -> list:
         lvl_map: List[MapObject] = []
@@ -35,10 +35,31 @@ class MapCreator:
 
 
 class EnemyQueueCreator:
-    enemies_queue = [18 * [Common]]
+    # noinspection PyTypeChecker
+    enemies_queue = [18 * [Common] + 2 * [Fast],
+                     2 * [Armored] + 4 * [Fast] + 14 * [Common],
+                     14 * [Common] + 4 * [Fast] + 2 * [Armored]]
 
     def generate_queue(self, level_num: int):
         return self.enemies_queue[level_num - 1]
+
+
+class GameHelper:
+    queue_creator = EnemyQueueCreator()
+
+    def __init__(self, level_num):
+        self.enemies_spawned = 0
+        self.enemies_queue = self.queue_creator.generate_queue(level_num)
+
+    def spawn_enemies(self, enemies):
+        if len(enemies) >= 1:
+            return
+        self.enemies_spawned += 1
+        is_bonus = False
+        if self.enemies_spawned in [4, 11, 18]:
+            is_bonus = True
+        spawning_enemy = self.enemies_queue.pop(0)(is_bonus)
+        enemies.append(spawning_enemy)
 
 
 class Level:
