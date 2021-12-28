@@ -2,7 +2,7 @@ import pygame
 
 from player import Player
 from enums import Direction
-from level import Level, EnemyQueueCreator
+from game_helper import Level, GameHelper
 import landscape
 
 lower = pygame.sprite.Group()
@@ -10,34 +10,17 @@ medium = pygame.sprite.Group()
 upper = pygame.sprite.Group()
 
 obstacles = []
-empty_tiles = []
 bullets = []
 enemies = []
+explosion_queue = [[] for i in range(4)]
 clock = pygame.time.Clock()
-
-
-class GameHelper:
-    queue_creator = EnemyQueueCreator()
-
-    def __init__(self, level_num):
-        self.enemies_spawned = 0
-        self.enemies_queue = self.queue_creator.generate_queue(level_num)
-
-    def spawn_enemies(self):
-        if len(enemies) >= 1:
-            return
-        self.enemies_spawned += 1
-        is_bonus = False
-        if self.enemies_spawned in [4, 11, 18]:
-            is_bonus = True
-        spawning_enemy = self.enemies_queue.pop(0)(is_bonus)
-        enemies.append(spawning_enemy)
 
 
 class Game:
     def __init__(self, width, height):
         self.width = width
         self.height = height
+        self.running = True
 
     @staticmethod
     def on_player_key_pressed(player, current_direction):
@@ -81,49 +64,49 @@ class Game:
                         enemy.switch_sprite()
 
     def run(self):
+        lvl = 2
         pygame.init()
         window = pygame.display.set_mode((self.width, self.height))
         pygame.display.set_caption("Battle City")
-        game_helper = GameHelper(1)
-        level_1 = Level(1).map
+        game_helper = GameHelper(lvl)
         water_switch = pygame.USEREVENT + 1
         bonus_tank_switch = pygame.USEREVENT + 2
         pygame.time.set_timer(water_switch, 750)
         pygame.time.set_timer(bonus_tank_switch, 250)
+        level_1 = Level(lvl).map
         for tile in level_1:
-            if isinstance(tile, landscape.Empty):
-                empty_tiles.append(tile.rect)
-            elif isinstance(tile, landscape.Grass):
+            if isinstance(tile, landscape.Grass):
                 upper.add(tile)
-            elif isinstance(tile, (landscape.Ice, landscape.Water)):
-                if isinstance(tile, landscape.Water):
-                    obstacles.append(tile.rect)
+            elif isinstance(tile, landscape.Ice):
                 lower.add(tile)
             else:
-                obstacles.append(tile.rect)
+                obstacles.append(tile)
                 medium.add(tile)
         current_direction = Direction.Down
         player = Player()
-        run = True
-        while run:
+        while self.running:
             window.fill((0, 0, 0))
-            for event in pygame.event.get():
-                if event.type == pygame.QUIT:
-                    run = False
             self.iter_events(water_switch, bonus_tank_switch)
             lower.draw(window)
             window.blit(player.image, player.position)
             medium.draw(window)
             upper.draw(window)
-            game_helper.spawn_enemies()
+
+            game_helper.spawn_enemies(enemies)
+
             for bullet in bullets:
                 window.blit(bullet.image, bullet.position)
-                bullet.move()
+                bullet.move(obstacles, enemies, bullets, explosion_queue)
 
             for enemy in enemies:
                 enemy.step(obstacles, bullets)
                 window.blit(enemy.image, enemy.position)
             current_direction = self.on_player_key_pressed(player, current_direction)
+
+            for i in explosion_queue[0]:
+                window.blit(i[0], i[1])
+            del explosion_queue[0]
+            explosion_queue.append([])
 
             pygame.display.update()
             clock.tick(60)

@@ -1,47 +1,53 @@
 from enums import Direction
 from bullet import Bullet
 from pygame import Rect, Surface
+
 width = height = 32
 
 
 class Tank:
     def __init__(self, images: dict[Direction, Surface], health=100, velocity=2,
-                 shouting_speed=2, direction=Direction.Down, position=(0, 0), is_player=False):
+                 shouting_speed=4, direction=Direction.Down, position=(0, 0), is_player=False):
         self._health = health
         self._velocity = velocity
         self._shouting_speed = shouting_speed
         self._direction = direction
         self._position = position
         self._is_player = is_player
-        self._images = images
+        self.images = images
         self._image = images[direction]
         self._rect = self.image.get_rect()
         self.max_bullets_available = 1
+        self._stars = 0
 
     # region Properties
     @property
-    def health(self): return self._health
+    def health(self):
+        return self._health
 
     @property
-    def velocity(self): return self._velocity
+    def velocity(self):
+        return self._velocity
 
     @property
-    def shouting_speed(self): return self._shouting_speed
+    def shouting_speed(self):
+        return self._shouting_speed
 
     @property
-    def direction(self): return self._direction
+    def direction(self):
+        return self._direction
 
     @property
-    def position(self): return self._position
+    def position(self):
+        return self._position
 
     @property
-    def is_player(self): return self._is_player
+    def is_player(self):
+        return self._is_player
 
     @property
-    def images(self): return self._images
-
-    @property
-    def image(self): return self._image
+    def image(self):
+        return self._image
 
     @property
     def rect(self): return self._rect
@@ -60,7 +66,7 @@ class Tank:
         position = self.position
         if intersecting_index != -1:
             max_allowable_shift = 3 / 8 * width + 1
-            intersecting_rect = obstacles[intersecting_index]
+            intersecting_rect = obstacles[intersecting_index].rect
             left_intersection = intersecting_rect.x + intersecting_rect.width - position[0]
             above_intersection = intersecting_rect.y + intersecting_rect.height - position[1]
             right_intersection = position[0] + self.rect.width - intersecting_rect.x
@@ -82,6 +88,9 @@ class Tank:
         self._direction = direction
         self._image = self.images[direction]
 
+    def take_damage(self, explosion_queue):
+        self._health -= 100
+
     def shoot(self, bullets: list[Bullet]):
         bullet_width = bullet_height = 8
         bullet_pos_shift = {Direction.Up: ((width - bullet_width) // 2, 0),
@@ -92,5 +101,9 @@ class Tank:
         bullets_shot = len(list(filter(lambda b: b.owner is self, bullets)))
         if bullets_shot >= self.max_bullets_available:
             return
-        bullet = Bullet(self.direction, bullet_pos, self, self.is_player)
+        is_steel_destroyable = False
+        if self._stars >= 3:
+            is_steel_destroyable = True
+        bullet = Bullet(self.direction, bullet_pos, self, self.is_player,
+                        self.shouting_speed, is_steel_destroyable)
         bullets.append(bullet)
