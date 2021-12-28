@@ -67,12 +67,29 @@ class Game:
 
         return current_direction
 
+    def iter_events(self, water_switch, bonus_tank_switch):  # spawn power ups?
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                self.running = False
+            elif event.type == water_switch:
+                for obstacle in obstacles:
+                    if isinstance(obstacle, landscape.Water):
+                        obstacle.switch_sprite()
+            elif event.type == bonus_tank_switch:
+                for enemy in enemies:
+                    if enemy.is_bonus:
+                        enemy.switch_sprite()
+
     def run(self):
         pygame.init()
         window = pygame.display.set_mode((self.width, self.height))
         pygame.display.set_caption("Battle City")
         game_helper = GameHelper(1)
         level_1 = Level(1).map
+        water_switch = pygame.USEREVENT + 1
+        bonus_tank_switch = pygame.USEREVENT + 2
+        pygame.time.set_timer(water_switch, 750)
+        pygame.time.set_timer(bonus_tank_switch, 250)
         for tile in level_1:
             if isinstance(tile, landscape.Empty):
                 empty_tiles.append(tile.rect)
@@ -93,6 +110,7 @@ class Game:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     run = False
+            self.iter_events(water_switch, bonus_tank_switch)
             lower.draw(window)
             window.blit(player.image, player.position)
             medium.draw(window)
