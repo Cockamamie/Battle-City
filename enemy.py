@@ -3,10 +3,11 @@ from tank import Tank, Direction, Rect
 
 
 class Enemy(Tank):
-    def __init__(self, images, bonus_images, health: int = 100,
+    def __init__(self, images, position,
+                 bonus_images, health: int = 100,
                  velocity: int = 2, shouting_speed: int = 2,
                  is_bonus=False):
-        super().__init__(images, health, velocity, shouting_speed)
+        super().__init__(images, health, velocity, shouting_speed, position=position)
         self._is_bonus = is_bonus
         self._bonus_images = bonus_images
         self._bonus_index = 0
@@ -51,10 +52,10 @@ class Enemy(Tank):
             else:
                 self.change_direction(intersecting_index)
 
-    def step(self, obstacles, bullets):
+    def step(self, obstacles, bullets, tanks):
         delta_pos = [delta * self.velocity for delta in self.direction.value]
         next_position = [x + y for x, y in zip(self.position, delta_pos)]
         intersecting_index = Rect.collidelist(Rect(next_position, (32, 32)), obstacles)
         self.check_tile_reach(intersecting_index)
-        self.move(self.direction, obstacles)
+        self.move(self.direction, obstacles, tanks)
         self.try_shoot(bullets)

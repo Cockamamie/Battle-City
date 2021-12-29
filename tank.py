@@ -83,7 +83,7 @@ class Tank:
             return [x, y]
         return position
 
-    def move(self, direction: Direction, obstacles, enemies=None, bonuses=None):
+    def move(self, direction: Direction, obstacles, enemies, bonuses=None):
         self._position = tuple(self.__get_next_pos(direction, obstacles, enemies))
         self._direction = direction
         self._image = self.images[direction]

@@ -26,31 +26,32 @@ class Game:
     def on_player_key_pressed(player, current_direction):
         keys = pygame.key.get_pressed()
         if keys[pygame.K_LEFT] and current_direction == Direction.Left:
-            player.move(Direction.Left, obstacles)
+            player.move(Direction.Left, obstacles, enemies)
         elif keys[pygame.K_RIGHT] and current_direction == Direction.Right:
-            player.move(Direction.Right, obstacles)
+            player.move(Direction.Right, obstacles, enemies)
         elif keys[pygame.K_UP] and current_direction == Direction.Up:
-            player.move(Direction.Up, obstacles)
+            player.move(Direction.Up, obstacles, enemies)
         elif keys[pygame.K_DOWN] and current_direction == Direction.Down:
-            player.move(Direction.Down, obstacles)
+            player.move(Direction.Down, obstacles, enemies)
         elif keys[pygame.K_LEFT]:
-            player.move(Direction.Left, obstacles)
+            player.move(Direction.Left, obstacles, enemies)
             current_direction = Direction.Left
         elif keys[pygame.K_RIGHT]:
-            player.move(Direction.Right, obstacles)
+            player.move(Direction.Right, obstacles, enemies)
             current_direction = Direction.Right
         elif keys[pygame.K_UP]:
-            player.move(Direction.Up, obstacles)
+            player.move(Direction.Up, obstacles, enemies)
             current_direction = Direction.Up
         elif keys[pygame.K_DOWN]:
-            player.move(Direction.Down, obstacles)
+            player.move(Direction.Down, obstacles, enemies)
             current_direction = Direction.Down
         if keys[pygame.K_SPACE]:
             player.shoot(bullets)
 
         return current_direction
 
-    def iter_events(self, water_switch, bonus_tank_switch):  # spawn power ups?
+    def iter_events(self, game_helper, water_switch, bonus_tank_switch,
+                    enemy_spawn):  # spawn power ups?
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 self.running = False
@@ -62,17 +63,21 @@ class Game:
                 for enemy in enemies:
                     if enemy.is_bonus:
                         enemy.switch_sprite()
+            elif event.type == enemy_spawn:
+                game_helper.spawn_enemies(enemies)
 
     def run(self):
-        lvl = 2
+        lvl = 1
         pygame.init()
         window = pygame.display.set_mode((self.width, self.height))
         pygame.display.set_caption("Battle City")
         game_helper = GameHelper(lvl)
         water_switch = pygame.USEREVENT + 1
         bonus_tank_switch = pygame.USEREVENT + 2
+        enemy_spawn = pygame.USEREVENT + 3
         pygame.time.set_timer(water_switch, 750)
         pygame.time.set_timer(bonus_tank_switch, 250)
+        pygame.time.set_timer(enemy_spawn, 3000)
         level_1 = Level(lvl).map
         for tile in level_1:
             if isinstance(tile, landscape.Grass):
@@ -84,22 +89,22 @@ class Game:
                 medium.add(tile)
         current_direction = Direction.Down
         player = Player()
+        game_helper.spawn_enemies(enemies)
         while self.running:
             window.fill((0, 0, 0))
-            self.iter_events(water_switch, bonus_tank_switch)
+            self.iter_events(game_helper, water_switch, bonus_tank_switch,
+                             enemy_spawn)
             lower.draw(window)
             window.blit(player.image, player.position)
             medium.draw(window)
             upper.draw(window)
-
-            game_helper.spawn_enemies(enemies)
 
             for bullet in bullets:
                 window.blit(bullet.image, bullet.position)
                 bullet.move(obstacles, enemies, bullets, explosion_queue)
 
             for enemy in enemies:
-                enemy.step(obstacles, bullets)
+                enemy.step(obstacles, bullets, enemies + [player])
                 window.blit(enemy.image, enemy.position)
             current_direction = self.on_player_key_pressed(player, current_direction)
 
@@ -107,7 +112,7 @@ class Game:
                 window.blit(i[0], i[1])
             del explosion_queue[0]
             explosion_queue.append([])
-
+            
             pygame.display.update()
             clock.tick(60)
         pygame.quit()

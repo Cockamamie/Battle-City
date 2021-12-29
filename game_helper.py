@@ -46,19 +46,23 @@ class EnemyQueueCreator:
 
 class GameHelper:
     queue_creator = EnemyQueueCreator()
+    spawn_positions = [(192, 0), (384, 0), (0, 0)]
+    spawn_index = 0
 
     def __init__(self, level_num):
         self.enemies_spawned = 0
         self.enemies_queue = self.queue_creator.generate_queue(level_num)
 
     def spawn_enemies(self, enemies):
-        if len(enemies) > 11:
+        if len(enemies) > 3:
             return
         self.enemies_spawned += 1
         is_bonus = False
         if self.enemies_spawned in [4, 8, 18]:
             is_bonus = True
-        spawning_enemy = self.enemies_queue.pop(0)(is_bonus)
+        pos = self.spawn_positions[self.spawn_index]
+        spawning_enemy = self.enemies_queue.pop(0)(pos, is_bonus)
+        self.spawn_index = (self.spawn_index + 1) % 3
         enemies.append(spawning_enemy)
 
 
