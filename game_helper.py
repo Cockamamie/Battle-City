@@ -3,7 +3,6 @@ from typing import List
 
 from pygame import Rect
 
-from interfaces import MapObject
 from enemies import Common, Fast, RapidFire, Armored
 from landscape import Brick, Steel, Grass, Water, Ice
 
@@ -20,7 +19,7 @@ class MapCreator:
         self.level_path = levels_path + f'/{level_number}.txt'
 
     def create_map(self, tile_size=16) -> list:
-        lvl_map: List[MapObject] = []
+        lvl_map= []
         with open(self.level_path, 'r') as lvl_data:
             for i, line in enumerate(lvl_data.readlines()):
                 for j, symbol in enumerate(line):

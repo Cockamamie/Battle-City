@@ -10,7 +10,7 @@ class Tank:
                  shouting_speed=4, direction=Direction.Down, position=(0, 0), is_player=False):
         self._health = health
         self._velocity = velocity
-        self._shouting_speed = shouting_speed
+        self.shouting_speed = shouting_speed
         self._direction = direction
         self._position = position
         self._is_player = is_player
@@ -18,7 +18,6 @@ class Tank:
         self._image = images[direction]
         self._rect = self.image.get_rect()
         self.max_bullets_available = 1
-        self._stars = 0
 
     # region Properties
     @property
@@ -28,10 +27,6 @@ class Tank:
     @property
     def velocity(self):
         return self._velocity
-
-    @property
-    def shouting_speed(self):
-        return self._shouting_speed
 
     @property
     def direction(self):
@@ -83,7 +78,7 @@ class Tank:
             return [x, y]
         return position
 
-    def move(self, direction: Direction, obstacles, enemies, bonuses=None):
+    def move(self, direction: Direction, obstacles, enemies):
         self._position = tuple(self.__get_next_pos(direction, obstacles, enemies))
         self._direction = direction
         self._image = self.images[direction]
@@ -91,7 +86,7 @@ class Tank:
     def take_damage(self, explosion_queue):
         self._health -= 100
 
-    def shoot(self, bullets: list[Bullet]):
+    def shoot(self, bullets, is_steel_destroyable=False):
         bullet_width = bullet_height = 8
         bullet_pos_shift = {Direction.Up: ((width - bullet_width) // 2, 0),
                             Direction.Right: (width, (height - bullet_height) // 2),
@@ -101,9 +96,6 @@ class Tank:
         bullets_shot = len(list(filter(lambda b: b.owner is self, bullets)))
         if bullets_shot >= self.max_bullets_available:
             return
-        is_steel_destroyable = False
-        if self._stars >= 3:
-            is_steel_destroyable = True
         bullet = Bullet(self.direction, bullet_pos, self, self.is_player,
                         self.shouting_speed, is_steel_destroyable)
         bullets.append(bullet)
