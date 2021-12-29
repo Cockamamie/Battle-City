@@ -1,10 +1,8 @@
 import pygame.sprite
-
-from interfaces import MapObject
 from Assets.sprites import SpritesCreator
 
 
-class Brick(MapObject, pygame.sprite.Sprite):
+class Brick(pygame.sprite.Sprite):
     def __init__(self, rect):
         pygame.sprite.Sprite.__init__(self)
         self.image = SpritesCreator().brick()
@@ -14,7 +12,7 @@ class Brick(MapObject, pygame.sprite.Sprite):
         pygame.sprite.Sprite.kill(self)
 
 
-class Steel(MapObject, pygame.sprite.Sprite):
+class Steel(pygame.sprite.Sprite):
     def __init__(self, rect):
         pygame.sprite.Sprite.__init__(self)
         self.image = SpritesCreator().steel()
@@ -24,14 +22,14 @@ class Steel(MapObject, pygame.sprite.Sprite):
         pygame.sprite.Sprite.kill(self)
 
 
-class Grass(MapObject, pygame.sprite.Sprite):
+class Grass(pygame.sprite.Sprite):
     def __init__(self, rect):
         pygame.sprite.Sprite.__init__(self)
         self.image = SpritesCreator().grass()
         self.rect = rect
 
 
-class Water(MapObject, pygame.sprite.Sprite):
+class Water(pygame.sprite.Sprite):
     def __init__(self, rect):
         pygame.sprite.Sprite.__init__(self)
         self.index = 0
@@ -44,7 +42,7 @@ class Water(MapObject, pygame.sprite.Sprite):
         self.image = self.images[self.index]
 
 
-class Ice(MapObject, pygame.sprite.Sprite):
+class Ice(pygame.sprite.Sprite):
     def __init__(self, rect):
         pygame.sprite.Sprite.__init__(self)
         self.image = SpritesCreator().ice()
