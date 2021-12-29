@@ -1,23 +1,25 @@
 from enums import Direction
 from bullet import Bullet
 from pygame import Rect, Surface
+from Assets.sprites import SpritesCreator
 
 width = height = 32
 
 
 class Tank:
-    def __init__(self, images: dict[Direction, Surface], health=100, velocity=2,
-                 shouting_speed=2, direction=Direction.Down, position=(0, 0), is_player=False):
+    def __init__(self, images: Dict[Direction, Surface], health=100, velocity=2,
+                 shouting_speed=4, direction=Direction.Down, position=(0, 0), is_player=False):
         self._health = health
         self._velocity = velocity
         self._shouting_speed = shouting_speed
         self._direction = direction
         self._position = position
         self._is_player = is_player
-        self._images = images
+        self.images = images
         self._image = images[direction]
         self._rect = self.image.get_rect()
         self.max_bullets_available = 1
+        self._stars = 0
 
     # region Properties
     @property
@@ -45,10 +47,6 @@ class Tank:
         return self._is_player
 
     @property
-    def images(self):
-        return self._images
-
-    @property
     def image(self):
         return self._image
 
@@ -60,7 +58,8 @@ class Tank:
     def in_map_bounds(position):
         return 0 <= position[0] < 385 and 0 <= position[1] < 385
 
-    def __get_next_pos(self, direction, obstacles, enemies):
+    def __get_next_pos(self, direction, obstacles, tanks):
+        enemies = tanks
         delta_pos = [delta * self.velocity for delta in direction.value]
         next_position = [x + y for x, y in zip(self.position, delta_pos)]
         intersecting_index = Rect.collidelist(Rect(next_position, (32, 32)), obstacles)
@@ -104,5 +103,9 @@ class Tank:
         bullets_shot = len(list(filter(lambda b: b.owner is self, bullets)))
         if bullets_shot >= self.max_bullets_available:
             return
-        bullet = Bullet(self.direction, bullet_pos, self, self.is_player)
+        is_steel_destroyable = False
+        if self._stars >= 3:
+            is_steel_destroyable = True
+        bullet = Bullet(self.direction, bullet_pos, self, self.is_player,
+                        self.shouting_speed, is_steel_destroyable)
         bullets.append(bullet)
