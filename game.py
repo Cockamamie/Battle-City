@@ -26,24 +26,24 @@ class Game:
     def on_player_key_pressed(player, current_direction):
         keys = pygame.key.get_pressed()
         if keys[pygame.K_LEFT] and current_direction == Direction.Left:
-            player.move(Direction.Left, obstacles)
+            player.move(Direction.Left, obstacles, enemies)
         elif keys[pygame.K_RIGHT] and current_direction == Direction.Right:
-            player.move(Direction.Right, obstacles)
+            player.move(Direction.Right, obstacles, enemies)
         elif keys[pygame.K_UP] and current_direction == Direction.Up:
-            player.move(Direction.Up, obstacles)
+            player.move(Direction.Up, obstacles, enemies)
         elif keys[pygame.K_DOWN] and current_direction == Direction.Down:
-            player.move(Direction.Down, obstacles)
+            player.move(Direction.Down, obstacles, enemies)
         elif keys[pygame.K_LEFT]:
-            player.move(Direction.Left, obstacles)
+            player.move(Direction.Left, obstacles, enemies)
             current_direction = Direction.Left
         elif keys[pygame.K_RIGHT]:
-            player.move(Direction.Right, obstacles)
+            player.move(Direction.Right, obstacles, enemies)
             current_direction = Direction.Right
         elif keys[pygame.K_UP]:
-            player.move(Direction.Up, obstacles)
+            player.move(Direction.Up, obstacles, enemies)
             current_direction = Direction.Up
         elif keys[pygame.K_DOWN]:
-            player.move(Direction.Down, obstacles)
+            player.move(Direction.Down, obstacles, enemies)
             current_direction = Direction.Down
         if keys[pygame.K_SPACE]:
             player.shoot(bullets)
@@ -96,24 +96,24 @@ class Game:
                              enemy_spawn)
             lower.draw(window)
             window.blit(player.image, player.position)
-            medium.draw(window)
-            upper.draw(window)
-
 
             for bullet in bullets:
                 window.blit(bullet.image, bullet.position)
-                bullet.move(obstacles, enemies, bullets, explosion_queue)
+                bullet.move(obstacles, enemies, bullets, explosion_queue, player)
 
             for enemy in enemies:
-                enemy.step(obstacles, bullets)
+                enemy.step(obstacles, bullets, enemies + [player])
                 window.blit(enemy.image, enemy.position)
             current_direction = self.on_player_key_pressed(player, current_direction)
+
+            medium.draw(window)
+            upper.draw(window)
 
             for i in explosion_queue[0]:
                 window.blit(i[0], i[1])
             del explosion_queue[0]
             explosion_queue.append([])
-
+            
             pygame.display.update()
             clock.tick(60)
         pygame.quit()

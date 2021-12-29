@@ -52,10 +52,10 @@ class Enemy(Tank):
             else:
                 self.change_direction(intersecting_index)
 
-    def step(self, obstacles, bullets):
+    def step(self, obstacles, bullets, tanks):
         delta_pos = [delta * self.velocity for delta in self.direction.value]
         next_position = [x + y for x, y in zip(self.position, delta_pos)]
         intersecting_index = Rect.collidelist(Rect(next_position, (32, 32)), obstacles)
         self.check_tile_reach(intersecting_index)
-        self.move(self.direction, obstacles)
+        self.move(self.direction, obstacles, tanks)
         self.try_shoot(bullets)
