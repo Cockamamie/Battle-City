@@ -106,17 +106,18 @@ class Game:
                              enemy_spawn, bonus_blink)
             lower.draw(window)
             window.blit(player.image, player.position)
-            medium.draw(window)
-            upper.draw(window)
 
             for bullet in bullets:
                 window.blit(bullet.image, bullet.position)
-                bullet.move(obstacles, enemies, bullets, explosion_queue)
+                bullet.move(obstacles, enemies, bullets, explosion_queue, player)
 
             for enemy in enemies:
                 enemy.step(obstacles, bullets, enemies + [player])
                 window.blit(enemy.image, enemy.position)
             current_direction = self.on_player_key_pressed(player, current_direction)
+
+            medium.draw(window)
+            upper.draw(window)
 
             for i in explosion_queue[0]:
                 window.blit(i[0], i[1])

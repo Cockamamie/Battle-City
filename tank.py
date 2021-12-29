@@ -1,6 +1,7 @@
 from enums import Direction
 from bullet import Bullet
 from pygame import Rect, Surface
+from Assets.sprites import SpritesCreator
 
 width = height = 32
 
@@ -18,6 +19,7 @@ class Tank:
         self._image = images[direction]
         self._rect = self.image.get_rect()
         self.max_bullets_available = 1
+        self._stars = 0
 
     # region Properties
     @property
@@ -52,11 +54,21 @@ class Tank:
     def in_map_bounds(position):
         return 0 <= position[0] < 385 and 0 <= position[1] < 385
 
-    def __get_next_pos(self, direction, obstacles, enemies):
+    def __get_next_pos(self, direction, obstacles, tanks):
+        enemies = tanks
         delta_pos = [delta * self.velocity for delta in direction.value]
         next_position = [x + y for x, y in zip(self.position, delta_pos)]
         intersecting_index = Rect.collidelist(Rect(next_position, (32, 32)), obstacles)
-        if intersecting_index == -1 and self.in_map_bounds(next_position):
+
+        for enemy in enemies:
+            if enemy.position == self.position:
+                enemies.remove(enemy)
+                break
+
+        intersecting_enemies_index = Rect.collidelist(Rect(next_position, (32, 32)),
+                                                      list(map(lambda x: (x.position, (32, 32)), enemies)))
+
+        if intersecting_index + intersecting_enemies_index == -2 and self.in_map_bounds(next_position):
             return next_position
         position = self.position
         if intersecting_index != -1:
@@ -75,6 +87,10 @@ class Tank:
                 y = intersecting_rect.y + intersecting_rect.height
             if bot_intersection < max_allowable_shift:
                 y = intersecting_rect.y - self.rect.height
+
+            if Rect.collidelist(Rect((x, y), (32, 32)),
+                                list(map(lambda x: (x.position, (32, 32)), enemies))) != -1:
+                x, y = position
             return [x, y]
         return position
 
@@ -83,8 +99,22 @@ class Tank:
         self._direction = direction
         self._image = self.images[direction]
 
-    def take_damage(self, explosion_queue):
+    def take_damage(self, explosion_queue, enemies, index, player):
         self._health -= 100
+        if self._health <= 0:
+            self.blow_up(explosion_queue)
+            self.destroy(enemies, index, player)
+
+    def blow_up(self, explosion_queue):
+        x, y = self.position[0], self.position[1]
+        explosion_queue[0].append(((SpritesCreator().small_blast()), (x, y)))
+        explosion_queue[1].append(((SpritesCreator().medium_blast()), (x, y)))
+        explosion_queue[2].append(((SpritesCreator().large_blast()), (x, y)))
+
+    @staticmethod
+    def destroy(enemies, index, player):
+        if index < len(enemies):
+            del enemies[index]
 
     def shoot(self, bullets, is_steel_destroyable=False):
         bullet_width = bullet_height = 8

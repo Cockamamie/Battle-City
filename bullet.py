@@ -54,8 +54,10 @@ class Bullet:
         explosion_queue[1].append(((SpritesCreator().medium_blast()), (x, y)))
         explosion_queue[2].append(((SpritesCreator().large_blast()), (x, y)))
 
-    def move(self, obstacles, tanks, bullets, explosion_queue):
+    def move(self, obstacles, enemies, bullets, explosion_queue, player):
+        tanks = enemies + [player]
         blow_up_bullet = True
+        erase_bullet = True
         delta_pos = [delta * self.velocity for delta in self.direction.value]
         self.__position = tuple([x + y for x, y in zip(self.position, delta_pos)])
         current_rect = Rect(self.position, (8, 8))
@@ -72,19 +74,59 @@ class Bullet:
                 del obstacles[i - shift]
                 shift += 1
 
+        not_own1 = []
+        for e in tanks:
+            not_own1.append(e)
+        for t in not_own1:
+            if self.owner.position == t.position:
+                not_own1.remove(t)
+                break
         intersecting_tanks_index = Rect.collidelist(Rect(self.position, (8, 8)),
-                                                    list(map(lambda x: x.rect, tanks)))
+                                                    list(map(lambda x: (x.position, (32, 32)), not_own1)))
+        not_own = []
+        for e in bullets:
+            not_own.append(e)
+        for b in not_own:
+            if self.position == b.position:
+                not_own.remove(b)
+                break
         intersecting_bull_index = Rect.collidelist(Rect(self.position, (8, 8)),
-                                                   list(map(lambda x: x.rect, bullets)))
+                                                   list(map(lambda x: (x.position, (8, 8)), not_own)))
+
         if intersecting_bull_index != -1:
+            for i in range(len(bullets)):
+                if not_own[intersecting_bull_index].position == bullets[i].position:
+                    intersecting_bull_index = i
+                    break
             intersecting_bullet = bullets[intersecting_bull_index]
             if not(intersecting_bullet.belongs_player or self.belongs_player):
                 blow_up_bullet = False
-        if intersecting_obs_index + intersecting_bull_index + intersecting_tanks_index != -3 or \
+            else:
+                del bullets[intersecting_bull_index]
+                for i in range(len(bullets)):
+                    if bullets[i].position == self.position:
+                        del bullets[i]
+                        break
+        if intersecting_obs_index + intersecting_tanks_index != -2 or \
                 not (0 <= self.position[0] < 409 and 0 <= self.position[1] < 409):
-            for i in range(len(bullets)):
-                if self.rect == bullets[i].rect:
-                    del bullets[i]
-                    break
+            if intersecting_tanks_index != -1:
+                for i in range(len(tanks)):
+                    if tanks[i].position == not_own1[intersecting_tanks_index].position:
+                        intersecting_tanks_index = i
+                        break
+                intersecting_tank = tanks[intersecting_tanks_index]
+                if intersecting_tank.is_player or self.belongs_player:
+                    for e in tanks:
+                        if e.position == intersecting_tank.position:
+                            intersecting_tank.take_damage(explosion_queue, enemies,
+                                                          intersecting_tanks_index, player)
+                else:
+                    blow_up_bullet = False
+                    erase_bullet = False
+            if erase_bullet:
+                for i in range(len(bullets)):
+                    if self.position == bullets[i].position:
+                        del bullets[i]
+                        break
             if blow_up_bullet:
                 self.blow_up(explosion_queue)
