@@ -9,11 +9,11 @@ from landscape import Brick, Steel
 
 class Bullet:
     def __init__(self, direction: Direction, start_position: (int, int),
-                 owner,
-                 belongs_player=False, is_steel_destroyable=False):
+                 owner, belongs_player=False,
+                 velocity=5, is_steel_destroyable=False):
         self.__direction = direction
         self.__position = start_position
-        self.velocity = 5
+        self.velocity = velocity
         self.__owner = owner
         self.__belongs_player = belongs_player
         self.__is_steel_destroyable = is_steel_destroyable

@@ -6,14 +6,14 @@ from enums import Direction, Color
 class SpritesCreator:
     def __init__(self):
         self.assets_path = str(Path(Path.cwd(), 'Assets'))
-        self.player = self.assets_path + '\\PlayerTank\\'
-        self.second_player = self.assets_path + '\\SecondPlayerTank\\'
-        self.power_ups = self.assets_path + '\\PowerUps\\'
-        self.bullet_path = self.assets_path + '\\Bullet\\'
-        self.blast = self.assets_path + '\\Blast\\'
-        self.spawn = self.assets_path + '\\EnemySpawn\\'
-        self.base = self.assets_path + '\\Base\\'
-        self.__blocks = self.assets_path + '\\Blocks\\'
+        self.player = self.assets_path + '/PlayerTank/'
+        self.second_player = self.assets_path + '/SecondPlayerTank/'
+        self.power_ups = self.assets_path + '/PowerUps/'
+        self.bullet_path = self.assets_path + '/Bullet/'
+        self.blast = self.assets_path + '/Blast/'
+        self.spawn = self.assets_path + '/EnemySpawn/'
+        self.base = self.assets_path + '/Base/'
+        self.__blocks = self.assets_path + '/Blocks/'
 
     def eagle(self):
         return image.load(f'{self.base}eagle.png').convert_alpha()
@@ -54,19 +54,19 @@ class SpritesCreator:
 
     def common_enemy(self, color: Color = Color.Gray) -> dict[Direction, Surface]:
         return self.create_tank_dict(self.assets_path +
-                                     f'\\{color.value}Tank\\', 'common')
+                                     f'/{color.value}Tank/', 'common')
 
     def fast_enemy(self, color: Color = Color.Gray) -> dict[Direction, Surface]:
         return self.create_tank_dict(self.assets_path +
-                                     f'\\{color.value}Tank\\', 'fast')
+                                     f'/{color.value}Tank/', 'fast')
 
     def rapid_enemy(self, color: Color = Color.Gray) -> dict[Direction, Surface]:
         return self.create_tank_dict(self.assets_path +
-                                     f'\\{color.value}Tank\\', 'rapid')
+                                     f'/{color.value}Tank/', 'rapid')
 
     def armored_enemy(self, color: Color = Color.Gray) -> dict[Direction, Surface]:
         return self.create_tank_dict(self.assets_path +
-                                     f'\\{color.value}Tank\\', 'armored')
+                                     f'/{color.value}Tank/', 'armored')
 
     def no_stars_second_player(self) -> dict[Direction, Surface]:
         return self.create_tank_dict(self.second_player, 'no_stars')
