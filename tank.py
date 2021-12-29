@@ -63,12 +63,21 @@ class Tank:
         delta_pos = [delta * self.velocity for delta in direction.value]
         next_position = [x + y for x, y in zip(self.position, delta_pos)]
         intersecting_index = Rect.collidelist(Rect(next_position, (32, 32)), obstacles)
-        if intersecting_index == -1 and self.in_map_bounds(next_position):
+
+        for enemy in enemies:
+            if enemy.position == self.position:
+                enemies.remove(enemy)
+                break
+
+        intersecting_enemies_index = Rect.collidelist(Rect(next_position, (32, 32)),
+                                                      list(map(lambda x: (x.position, (32, 32)), enemies)))
+
+        if intersecting_index + intersecting_enemies_index == -2 and self.in_map_bounds(next_position):
             return next_position
         position = self.position
         if intersecting_index != -1:
             max_allowable_shift = 3 / 8 * width + 1
-            intersecting_rect = obstacles[intersecting_index]
+            intersecting_rect = obstacles[intersecting_index].rect
             left_intersection = intersecting_rect.x + intersecting_rect.width - position[0]
             above_intersection = intersecting_rect.y + intersecting_rect.height - position[1]
             right_intersection = position[0] + self.rect.width - intersecting_rect.x
@@ -82,18 +91,36 @@ class Tank:
                 y = intersecting_rect.y + intersecting_rect.height
             if bot_intersection < max_allowable_shift:
                 y = intersecting_rect.y - self.rect.height
+
+            if Rect.collidelist(Rect((x, y), (32, 32)),
+                                list(map(lambda x: (x.position, (32, 32)), enemies))) != -1:
+                x, y = position
             return [x, y]
         return position
 
-    def move(self, direction: Direction, obstacles, enemies=None, bonuses=None):
+    def move(self, direction: Direction, obstacles, enemies, bonuses=None):
         self._position = tuple(self.__get_next_pos(direction, obstacles, enemies))
         self._direction = direction
         self._image = self.images[direction]
 
-    def take_damage(self, explosion_queue):
+    def take_damage(self, explosion_queue, enemies, index, player):
         self._health -= 100
+        if self._health <= 0:
+            self.blow_up(explosion_queue)
+            self.destroy(enemies, index, player)
 
-    def shoot(self, bullets: list[Bullet]):
+    def blow_up(self, explosion_queue):
+        x, y = self.position[0], self.position[1]
+        explosion_queue[0].append(((SpritesCreator().small_blast()), (x, y)))
+        explosion_queue[1].append(((SpritesCreator().medium_blast()), (x, y)))
+        explosion_queue[2].append(((SpritesCreator().large_blast()), (x, y)))
+
+    @staticmethod
+    def destroy(enemies, index, player):
+        if index < len(enemies):
+            del enemies[index]
+
+    def shoot(self, bullets: List[Bullet]):
         bullet_width = bullet_height = 8
         bullet_pos_shift = {Direction.Up: ((width - bullet_width) // 2, 0),
                             Direction.Right: (width, (height - bullet_height) // 2),
