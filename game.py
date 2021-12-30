@@ -4,9 +4,11 @@ from enums import Direction
 from game_helper import Level, GameHelper
 import landscape
 from power_ups import spawn_random
+from timeit import default_timer as timer
 
 pygame.init()
 
+shoot_timer = timer()
 
 lower = pygame.sprite.Group()
 medium = pygame.sprite.Group()
@@ -60,8 +62,11 @@ class Game:
         elif keys[pygame.K_DOWN]:
             player.move(Direction.Down, obstacles, enemies)
             current_direction = Direction.Down
-        if keys[pygame.K_SPACE]:
+
+        global shoot_timer
+        if keys[pygame.K_SPACE] and timer() - shoot_timer > 0.3:
             player.fire(bullets)
+            shoot_timer = timer()
 
         return current_direction
 
