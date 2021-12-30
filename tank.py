@@ -2,8 +2,11 @@ from enums import Direction, MovingSpeed, ShootingSpeed
 from bullet import Bullet
 from pygame import Rect, Surface
 from Assets.sprites import SpritesCreator
+from sound import Sounds
 
 width = height = 32
+
+sounds = Sounds()
 
 
 class Tank:
@@ -22,6 +25,7 @@ class Tank:
         self._rect = self.image.get_rect()
         self.max_bullets_available = 1
         self._stars = 0
+        self.destroy_enemy_sound = sounds.destroy_enemy
 
     # region Properties
     @property
@@ -100,6 +104,12 @@ class Tank:
         self._position = tuple(self.__get_next_pos(direction, obstacles, enemies))
         self._direction = direction
         self._image = self.images[direction]
+
+    def take_damage(self, explosion_queue, enemies, index):
+        self._health -= 100
+        if self._health <= 0:
+            self.blow_up(explosion_queue)
+            self.destroy(enemies, index)
 
     def blow_up(self, explosion_queue):
         rect = Rect(self.position[0], self.position[1],

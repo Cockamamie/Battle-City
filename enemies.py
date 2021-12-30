@@ -1,8 +1,10 @@
 from Assets.sprites import SpritesCreator
 from enemy import Enemy
 from enums import Color, MovingSpeed, ShootingSpeed
+from sound import Sounds
 
 sprites_creator = SpritesCreator()
+sounds = Sounds()
 
 
 class Common(Enemy):
@@ -80,5 +82,7 @@ class Armored(Enemy):
         self.images = [images, self._bonus_images][self._bonus_index]
 
     def take_damage(self, explosion_queue, enemies, index, player):
+        if self.health > 100:
+            sounds.armor.play()
         super().take_damage(explosion_queue, enemies, index, player)
         self.handle_sprite()
