@@ -1,5 +1,5 @@
 from Assets.sprites import SpritesCreator
-from enums import Direction
+from enums import Direction, MovingSpeed, ShootingSpeed
 from tank import Tank
 from pygame import Rect
 import power_ups

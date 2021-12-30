@@ -1,11 +1,13 @@
 from random import randint, choice
 from tank import Tank, Direction, Rect
+from enums import MovingSpeed, ShootingSpeed
 
 
 class Enemy(Tank):
     def __init__(self, images, position,
-                 bonus_images, health: int = 100,
-                 velocity: int = 2, shouting_speed: int = 2,
+                 bonus_images, health=100,
+                 velocity=MovingSpeed.Default.value,
+                 shouting_speed=ShootingSpeed.Default.value,
                  is_bonus=False):
         super().__init__(images, health, velocity, shouting_speed, position=position)
         self._is_bonus = is_bonus

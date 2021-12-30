@@ -1,4 +1,4 @@
-from enums import Direction
+from enums import Direction, MovingSpeed, ShootingSpeed
 from bullet import Bullet
 from pygame import Rect, Surface
 from Assets.sprites import SpritesCreator
@@ -7,8 +7,10 @@ width = height = 32
 
 
 class Tank:
-    def __init__(self, images: dict[Direction, Surface], health=100, velocity=2,
-                 shouting_speed=4, direction=Direction.Down, position=(0, 0), is_player=False):
+    def __init__(self, images: dict[Direction, Surface], health=100,
+                 velocity=MovingSpeed.Default.value,
+                 shouting_speed=ShootingSpeed.Default.value,
+                 direction=Direction.Down, position=(0, 0), is_player=False):
         self._health = health
         self._velocity = velocity
         self.shouting_speed = shouting_speed
