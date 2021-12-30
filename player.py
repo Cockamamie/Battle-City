@@ -7,6 +7,9 @@ sprites_creator = SpritesCreator()
 
 
 class Player(Tank):
+
+    start_pos = (128, 384)
+
     def __init__(self):
         images = sprites_creator.no_stars_player()
         self._stars = 0
@@ -14,7 +17,7 @@ class Player(Tank):
         self._is_steel_destroyable = False
 
         super().__init__(direction=Direction.Up, is_player=True,
-                         images=images, position=(128, 384))
+                         images=images, position=self.start_pos)
 
     def try_pickup_bonus(self, bonus, enemies, explosion_queue):
         player_rect = Rect(self.position[0], self.position[1], self.rect.width, self.rect.height)
@@ -47,3 +50,15 @@ class Player(Tank):
 
     def decrease_hp(self):
         self._hp -= 1
+
+    def reset(self):
+        self.decrease_hp()
+        if self._hp == 0:
+            pass
+        self._stars = 0
+        self.shouting_speed = ShootingSpeed.Default
+        self._velocity = MovingSpeed.Default
+        self.max_bullets_available = 1
+        self._is_steel_destroyable = False
+        self._position = self.start_pos
+        self._direction = Direction.Up
