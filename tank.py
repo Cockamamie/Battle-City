@@ -117,7 +117,7 @@ class Tank:
     @staticmethod
     def destroy(enemies, index):
         if index < len(enemies):
-            del enemies[index]
+            enemies.pop(index)
 
     def shoot(self, bullets, is_steel_destroyable=False):
         bullet_width = bullet_height = 8
