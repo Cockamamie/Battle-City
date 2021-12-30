@@ -1,7 +1,11 @@
 from pygame import Rect
+from pygame import Rect
 from enums import Direction
 from Assets.sprites import SpritesCreator
 from landscape import Brick, Steel, Eagle
+from sound import Sounds
+
+sounds = Sounds()
 
 
 class Bullet:
@@ -69,7 +73,11 @@ class Bullet:
                     obstacles[i - shift].defeat()
                     continue
                 if isinstance(obstacles[i - shift], Steel) and not self.__is_steel_destroyable:
+                    if self.belongs_player:
+                        obstacles[i - shift].sound.play()
                     continue
+                if self.belongs_player:
+                    obstacles[i - shift].sound.play()
                 obstacles[i - shift].kill()
                 obstacles.pop(i - shift)
                 shift += 1
@@ -138,4 +146,6 @@ class Bullet:
                         break
             if blow_up_bullet:
                 self.blow_up(explosion_queue)
+        if not (0 <= self.position[0] < 409 and 0 <= self.position[1] < 409) and self.belongs_player:
+            sounds.steel.play()
         return spawn_bonus
