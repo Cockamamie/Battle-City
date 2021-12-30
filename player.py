@@ -63,3 +63,4 @@ class Player(Tank):
         self._is_steel_destroyable = False
         self._position = self.start_pos
         self._direction = Direction.Up
+        self._image = self.images[self.direction]
