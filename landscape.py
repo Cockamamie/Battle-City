@@ -61,13 +61,14 @@ class Eagle(pygame.sprite.Sprite):
         self.image = SpritesCreator().flag()
 
     def blow_up(self, explosion_queue):
-        x = self.rect.x
-        y = self.rect.y
-        explosion_queue[0].append(((SpritesCreator().small_blast()), (x, y)))
-        explosion_queue[1].append(((SpritesCreator().small_blast()), (x, y)))
-        explosion_queue[2].append(((SpritesCreator().medium_blast()), (x, y)))
-        explosion_queue[3].append(((SpritesCreator().medium_blast()), (x, y)))
-        explosion_queue[4].append(((SpritesCreator().large_blast()), (x, y)))
-        explosion_queue[5].append(((SpritesCreator().large_blast()), (x, y)))
-        explosion_queue[6].append(((SpritesCreator().huge_blast()), (x - 16, y - 16)))
-        explosion_queue[7].append(((SpritesCreator().huge_blast()), (x - 16, y - 16)))
+        x, y = self.rect.center
+        sc = SpritesCreator()
+        blasts = [sc.small_blast, sc.medium_blast, sc.large_blast, sc.huge_blast]
+        for i in range(4):
+            explosion_queue[i].append((blasts[0](), (x - 16, y - 16)))
+        for i in range(4, 8):
+            explosion_queue[i].append((blasts[1](), (x - 16, y - 16)))
+        for i in range(8, 12):
+            explosion_queue[i].append((blasts[2](), (x - 16, y - 16)))
+        for i in range(12, 16):
+            explosion_queue[i].append((blasts[3](), (x - 32, y - 32)))

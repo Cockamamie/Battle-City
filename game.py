@@ -18,7 +18,7 @@ obstacles = []
 bullets = []
 enemies = []
 bonus = None
-explosion_queue = [[] for i in range(8)]
+explosion_queue = [[] for i in range(16)]
 clock = pygame.time.Clock()
 
 water_switch = pygame.USEREVENT + 1

@@ -102,11 +102,19 @@ class Tank:
         self._image = self.images[direction]
 
     def blow_up(self, explosion_queue):
-        x, y = self.position[0], self.position[1]
+        rect = Rect(self.position[0], self.position[1],
+                    self.rect.width, self.rect.height)
+        x, y = rect.center
         sc = SpritesCreator()
-        blasts = [sc.small_blast, sc.medium_blast, sc.large_blast]
-        for i in range(3):
-            explosion_queue[i].append((blasts[i](), (x, y)))
+        blasts = [sc.small_blast, sc.medium_blast, sc.large_blast, sc.huge_blast]
+        for i in range(4):
+            explosion_queue[i].append((blasts[0](), (x - 16, y - 16)))
+        for i in range(4, 8):
+            explosion_queue[i].append((blasts[1](), (x - 16, y - 16)))
+        for i in range(8, 12):
+            explosion_queue[i].append((blasts[2](), (x - 16, y - 16)))
+        for i in range(12, 16):
+            explosion_queue[i].append((blasts[3](), (x - 32, y - 32)))
 
     @staticmethod
     def destroy(enemies, index):

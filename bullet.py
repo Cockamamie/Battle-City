@@ -42,12 +42,26 @@ class Bullet:
         return self.__is_steel_destroyable
 
     def blow_up(self, explosion_queue):
-        x = self.position[0] - 12 if self.position[0] - 12 >= 0 else 0
-        y = self.position[1] - 12 if self.position[1] - 12 >= 0 else 0
+        x, y = Rect(self.position[0], self.position[1], 8, 8).center
+        if self.direction == Direction.Up:
+            x -= 16
+        if self.direction == Direction.Left:
+            y -= 16
+        if self.direction == Direction.Down:
+            y -= 24
+            x -= 16
+        if self.direction == Direction.Right:
+            y -= 16
+            x -= 16
+
         sc = SpritesCreator()
         blasts = [sc.small_blast, sc.medium_blast, sc.large_blast]
         for i in range(3):
-            explosion_queue[i].append((blasts[i](), (x, y)))
+            explosion_queue[i].append((blasts[0](), (x, y)))
+        for i in range(3, 6):
+            explosion_queue[i].append((blasts[1](), (x, y)))
+        for i in range(6, 9):
+            explosion_queue[i].append((blasts[2](), (x, y)))
 
     def move(self, obstacles, enemies, bullets, explosion_queue, player):
         spawn_bonus = False
@@ -126,8 +140,8 @@ class Bullet:
                             intersecting_tank.take_damage(
                                 explosion_queue, enemies, intersecting_tanks_index, player)
                 elif intersecting_tank.is_player:
-                    intersecting_tank.reset()
                     intersecting_tank.blow_up(explosion_queue)
+                    intersecting_tank.reset()
                 else:
                     blow_up_bullet = False
                     erase_bullet = False
