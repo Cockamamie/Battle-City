@@ -1,7 +1,7 @@
 import pygame
 from player import Player
 from enums import Direction
-from game_helper import Level, GameHelper
+from game_helper import MapCreator, GameHelper
 import landscape
 from power_ups import spawn_random
 from timeit import default_timer as timer
@@ -76,7 +76,7 @@ class Game:
 
         return current_direction
 
-    def iter_events(self):  # spawn power ups?
+    def iter_events(self):
         global bonus
         global game_helper
         for event in pygame.event.get():
@@ -126,7 +126,7 @@ class Game:
                 bonus = None
 
     def generate_map(self):
-        level = Level(self.lvl).map
+        level = MapCreator(self.lvl).create_map()
         for tile in level:
             if isinstance(tile, landscape.Grass):
                 upper.add(tile)
@@ -136,7 +136,7 @@ class Game:
                 obstacles.append(tile)
                 medium.add(tile)
 
-    def next_level(self):  # TODO set current direction outside this method
+    def next_level(self):
         global game_helper
         global obstacles
         global enemies
@@ -171,7 +171,7 @@ class Game:
         global player
         pygame.display.set_caption("Battle City")
         current_direction = Direction.Up
-        player = Player()  # If game over
+        player = Player()
         self.next_level()
         game_helper.spawn_enemies(enemies)
         while self.running:

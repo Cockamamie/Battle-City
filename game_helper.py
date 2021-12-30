@@ -1,7 +1,5 @@
 from pathlib import Path
-
 from pygame import Rect
-
 from enemies import Common, Fast, RapidFire, Armored
 from landscape import Brick, Steel, Grass, Water, Ice, Eagle
 
@@ -65,8 +63,3 @@ class GameHelper:
         spawning_enemy = self.enemies_queue.pop(0)(pos, is_bonus)
         self.spawn_index = (self.spawn_index + 1) % 3
         enemies.append(spawning_enemy)
-
-
-class Level:
-    def __init__(self, level_number: int):
-        self.map = MapCreator(level_number).create_map()
