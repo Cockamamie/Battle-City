@@ -49,7 +49,9 @@ class Tank:
         return self._image
 
     @property
-    def rect(self): return self._rect
+    def rect(self):
+        return self._rect
+
     # endregion
 
     @staticmethod
@@ -58,17 +60,15 @@ class Tank:
 
     def __get_next_pos(self, direction, obstacles, tanks):
         enemies = tanks
+        tank_size = (width, height)
         delta_pos = [delta * self.velocity for delta in direction.value]
         next_position = [x + y for x, y in zip(self.position, delta_pos)]
-        intersecting_index = Rect.collidelist(Rect(next_position, (32, 32)), obstacles)
 
-        for enemy in enemies:
-            if enemy.position == self.position:
-                enemies.remove(enemy)
-                break
+        intersecting_index = Rect.collidelist(Rect(next_position, tank_size), obstacles)
 
-        intersecting_enemies_index = Rect.collidelist(Rect(next_position, (32, 32)),
-                                                      list(map(lambda x: (x.position, (32, 32)), enemies)))
+        intersecting_enemies_index = \
+            Rect.collidelist(Rect(next_position, tank_size),
+                             list(map(lambda x: (x.position, tank_size), enemies)))
 
         if intersecting_index + intersecting_enemies_index == -2 and self.in_map_bounds(next_position):
             return next_position
@@ -90,8 +90,8 @@ class Tank:
             if bot_intersection < max_allowable_shift:
                 y = intersecting_rect.y - self.rect.height
 
-            if Rect.collidelist(Rect((x, y), (32, 32)),
-                                list(map(lambda x: (x.position, (32, 32)), enemies))) != -1:
+            if Rect.collidelist(Rect((x, y), tank_size),
+                                list(map(lambda x: (x.position, tank_size), enemies))) != -1:
                 x, y = position
             return [x, y]
         return position
@@ -109,9 +109,10 @@ class Tank:
 
     def blow_up(self, explosion_queue):
         x, y = self.position[0], self.position[1]
-        explosion_queue[0].append(((SpritesCreator().small_blast()), (x, y)))
-        explosion_queue[1].append(((SpritesCreator().medium_blast()), (x, y)))
-        explosion_queue[2].append(((SpritesCreator().large_blast()), (x, y)))
+        sc = SpritesCreator()
+        blasts = [sc.small_blast, sc.medium_blast, sc.large_blast]
+        for i in range(3):
+            explosion_queue[i].append((blasts[i](), (x, y)))
 
     @staticmethod
     def destroy(enemies, index, player):

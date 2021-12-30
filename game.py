@@ -5,6 +5,9 @@ from game_helper import Level, GameHelper
 import landscape
 from power_ups import spawn_random
 
+pygame.init()
+
+
 lower = pygame.sprite.Group()
 medium = pygame.sprite.Group()
 upper = pygame.sprite.Group()
@@ -15,6 +18,17 @@ enemies = []
 bonus = None
 explosion_queue = [[] for i in range(4)]
 clock = pygame.time.Clock()
+
+water_switch = pygame.USEREVENT + 1
+bonus_tank_switch = pygame.USEREVENT + 2
+enemy_spawn = pygame.USEREVENT + 3
+bonus_blink = pygame.USEREVENT + 4
+shoot_cool_down = pygame.USEREVENT + 5
+pygame.time.set_timer(water_switch, 750)
+pygame.time.set_timer(bonus_tank_switch, 250)
+pygame.time.set_timer(enemy_spawn, 3000)
+pygame.time.set_timer(bonus_blink, 200)
+pygame.time.set_timer(shoot_cool_down, 200)
 
 
 class Game:
@@ -74,18 +88,9 @@ class Game:
     def run(self):
         global bonus
         lvl = 1
-        pygame.init()
         window = pygame.display.set_mode((self.width, self.height))
         pygame.display.set_caption("Battle City")
         game_helper = GameHelper(lvl)
-        water_switch = pygame.USEREVENT + 1
-        bonus_tank_switch = pygame.USEREVENT + 2
-        enemy_spawn = pygame.USEREVENT + 3
-        bonus_blink = pygame.USEREVENT + 4
-        pygame.time.set_timer(water_switch, 750)
-        pygame.time.set_timer(bonus_tank_switch, 250)
-        pygame.time.set_timer(enemy_spawn, 3000)
-        pygame.time.set_timer(bonus_blink, 200)
         level_1 = Level(lvl).map
         for tile in level_1:
             if isinstance(tile, landscape.Grass):
@@ -112,7 +117,7 @@ class Game:
                 bullet.move(obstacles, enemies, bullets, explosion_queue, player)
 
             for enemy in enemies:
-                enemy.step(obstacles, bullets, enemies + [player])
+                enemy.step(obstacles, bullets, enemies, player)
                 window.blit(enemy.image, enemy.position)
             current_direction = self.on_player_key_pressed(player, current_direction)
 

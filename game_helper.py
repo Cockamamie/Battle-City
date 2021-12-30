@@ -1,5 +1,4 @@
 from pathlib import Path
-from typing import List
 
 from pygame import Rect
 
@@ -19,7 +18,7 @@ class MapCreator:
         self.level_path = levels_path + f'/{level_number}.txt'
 
     def create_map(self, tile_size=16) -> list:
-        lvl_map= []
+        lvl_map = []
         with open(self.level_path, 'r') as lvl_data:
             for i, line in enumerate(lvl_data.readlines()):
                 for j, symbol in enumerate(line):
@@ -54,6 +53,8 @@ class GameHelper:
 
     def spawn_enemies(self, enemies):
         if len(enemies) > 3:
+            return
+        if len(self.enemies_queue) == 0:
             return
         self.enemies_spawned += 1
         is_bonus = False

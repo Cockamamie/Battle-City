@@ -17,7 +17,7 @@ def spawn_random():
 
 
 class PowerUp:
-    __metaclass = ABCMeta
+    __metaclass__ = ABCMeta
 
     def __init__(self, pos, image):
         self.position = pos

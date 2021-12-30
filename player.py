@@ -2,7 +2,6 @@ from Assets.sprites import SpritesCreator
 from enums import Direction, MovingSpeed, ShootingSpeed
 from tank import Tank
 from pygame import Rect
-import power_ups
 
 sprites_creator = SpritesCreator()
 
@@ -17,7 +16,7 @@ class Player(Tank):
         super().__init__(direction=Direction.Up, is_player=True,
                          images=images, position=(144, 382))
 
-    def try_pickup_bonus(self, bonus: power_ups.PowerUp, enemies):
+    def try_pickup_bonus(self, bonus, enemies, explosion_queue):
         player_rect = Rect(self.position[0], self.position[1], self.rect.width, self.rect.height)
         intersecting = player_rect.colliderect(bonus.rect)
         if not intersecting:
