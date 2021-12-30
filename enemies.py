@@ -79,8 +79,6 @@ class Armored(Enemy):
             images = sprites_creator.armored_enemy(Color.Gray)
         self.images = [images, self._bonus_images][self._bonus_index]
 
-    def take_damage(self, explosion_queue, enemies, index, player):
-        super().take_damage(explosion_queue, enemies, index, player)
+    def take_damage(self, explosion_queue, enemies, index):
+        super().take_damage(explosion_queue, enemies, index)
         self.handle_sprite()
-
-
