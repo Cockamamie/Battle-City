@@ -54,6 +54,7 @@ class Grenade(PowerUp):
     def explode(self, enemies):
         pass
 
+
 class HP(PowerUp):
     def __init__(self, pos):
         image = sprites_creator.health()

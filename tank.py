@@ -7,7 +7,7 @@ width = height = 32
 
 
 class Tank:
-    def __init__(self, images: dict[Direction, Surface], health=100, velocity=2,
+    def __init__(self, images, health=100, velocity=2,
                  shouting_speed=4, direction=Direction.Down, position=(0, 0), is_player=False):
         self._health = health
         self._velocity = velocity
