@@ -50,7 +50,17 @@ class GameHelper:
         self.enemies_spawned = 0
         self.enemies_queue = self.queue_creator.generate_queue(level_num)
 
-    def spawn_enemies(self, enemies):
+    @staticmethod
+    def can_spawn(tanks, spawn_pos):
+        for tank in tanks:
+            tank_rect = Rect(tank.position[0], tank.position[1],
+                             tank.rect.width, tank.rect.height)
+            spawn_rect = Rect(spawn_pos, (32, 32))
+            if tank_rect.colliderect(spawn_rect):
+                return False
+        return True
+
+    def spawn_enemies(self, enemies, player):
         if len(enemies) > 3:
             return
         if len(self.enemies_queue) == 0:
@@ -60,6 +70,9 @@ class GameHelper:
         if self.enemies_spawned in [4, 8, 18]:
             is_bonus = True
         pos = self.spawn_positions[self.spawn_index]
-        spawning_enemy = self.enemies_queue.pop(0)(pos, is_bonus)
         self.spawn_index = (self.spawn_index + 1) % 3
+        if not self.can_spawn(enemies + [player], pos):
+            return
+        spawning_enemy = self.enemies_queue.pop(0)(pos, is_bonus)
+
         enemies.append(spawning_enemy)

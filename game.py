@@ -91,7 +91,7 @@ class Game:
                     if enemy.is_bonus:
                         enemy.switch_sprite()
             elif event.type == enemy_spawn:
-                game_helper.spawn_enemies(enemies)
+                game_helper.spawn_enemies(enemies, player)
             elif event.type == bonus_blink:
                 if bonus is not None:
                     bonus.switch_visibility()
@@ -149,7 +149,7 @@ class Game:
         self.lvl = self.lvl + 1
         game_helper = GameHelper(self.lvl)
         self.generate_map()
-        game_helper.spawn_enemies(enemies)
+        game_helper.spawn_enemies(enemies, player)
 
     def process_run(self, current_direction):
         lower.draw(self.window)
@@ -184,7 +184,6 @@ class Game:
         current_direction = Direction.Up
         player = Player()
         self.next_level()
-        game_helper.spawn_enemies(enemies)
         while self.running:
             self.window.fill((0, 0, 0))
             current_direction = self.process_run(current_direction)
