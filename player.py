@@ -70,4 +70,5 @@ class Player(Tank):
         self._velocity = MovingSpeed.Default.value
         self.max_bullets_available = 1
         self._is_steel_destroyable = False
+        self.images = sprites_creator.no_stars_player()
         self.set_start_params()
