@@ -47,3 +47,6 @@ class Player(Tank):
 
     def decrease_hp(self):
         self._hp -= 1
+
+    def reset(self):
+        pass
