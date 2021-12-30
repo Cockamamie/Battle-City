@@ -81,8 +81,8 @@ class Armored(Enemy):
             images = sprites_creator.armored_enemy(Color.Gray)
         self.images = [images, self._bonus_images][self._bonus_index]
 
-    def take_damage(self, explosion_queue, enemies, index):
+    def take_damage(self, explosion_queue, enemies, index, player):
         if self.health > 100:
             sounds.armor.play()
-        super().take_damage(explosion_queue, enemies, index)
+        super().take_damage(explosion_queue, enemies, index, player)
         self.handle_sprite()

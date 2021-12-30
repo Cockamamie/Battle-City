@@ -62,7 +62,7 @@ class Bullet:
         self.__position = tuple([x + y for x, y in zip(self.position, delta_pos)])
         current_rect = Rect(self.position, (8, 8))
         intersecting_obs_list = [(i.rect.colliderect(current_rect) and
-                                  isinstance(i, (Brick,  Steel, Eagle))) for i in obstacles]
+                                  isinstance(i, (Brick, Steel, Eagle))) for i in obstacles]
         intersecting_obs_index = -1
         shift = 0
         for i in range(len(intersecting_obs_list)):
@@ -107,7 +107,7 @@ class Bullet:
                     intersecting_bull_index = i
                     break
             intersecting_bullet = bullets[intersecting_bull_index]
-            if not(intersecting_bullet.belongs_player or self.belongs_player):
+            if not (intersecting_bullet.belongs_player or self.belongs_player):
                 blow_up_bullet = False
             else:
                 bullets.pop(intersecting_bull_index)
@@ -131,8 +131,8 @@ class Bullet:
                 if self.belongs_player:
                     for e in tanks:
                         if e.position == intersecting_tank.position:
-                            intersecting_tank.take_damage(explosion_queue, enemies,
-                                                          intersecting_tanks_index)
+                            intersecting_tank.take_damage(
+                                explosion_queue, enemies, intersecting_tanks_index, player)
                 elif intersecting_tank.is_player:
                     intersecting_tank.reset()
                     intersecting_tank.blow_up(explosion_queue)
