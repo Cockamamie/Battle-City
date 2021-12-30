@@ -138,7 +138,9 @@ class Game:
                     window.blit(bonus.image, bonus.position)
                 pickup_res = player.try_pickup_bonus(bonus, enemies, explosion_queue)
                 if pickup_res:
+                    bonus.on_pickup(player)
                     bonus = None
+
             pygame.display.update()
             clock.tick(60)
         pygame.quit()

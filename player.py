@@ -15,6 +15,7 @@ class Player(Tank):
         self._stars = 0
         self._hp = 3
         self._is_steel_destroyable = False
+        self.score = 0
 
         super().__init__(direction=Direction.Up, is_player=True,
                          images=images, position=self.start_pos)

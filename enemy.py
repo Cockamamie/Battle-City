@@ -2,9 +2,12 @@ from random import randint, choice
 from tank import Tank, Direction, Rect
 from enums import MovingSpeed, ShootingSpeed
 from timeit import default_timer as timer
+from abc import ABCMeta, abstractmethod
 
 
 class Enemy(Tank):
+    __metaclass__ = ABCMeta
+
     def __init__(self, images, position,
                  bonus_images, health=100,
                  velocity=MovingSpeed.Default.value,
@@ -15,6 +18,11 @@ class Enemy(Tank):
         self._bonus_images = bonus_images
         self._bonus_index = 0
         self.timer = timer()
+
+    @property
+    @abstractmethod
+    def points(self):
+        pass
 
     def take_damage(self, explosion_queue, enemies, index, player):
         self._health -= 100

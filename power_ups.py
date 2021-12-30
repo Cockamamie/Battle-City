@@ -29,6 +29,10 @@ class PowerUp:
     def switch_visibility(self):
         self.is_visible = not self.is_visible
 
+    @staticmethod
+    def on_pickup(player):
+        player.score += 500
+
     @abstractmethod
     def perform(self, player, enemies, explosion_queue):
         pass
