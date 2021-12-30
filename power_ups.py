@@ -2,8 +2,10 @@ from Assets.sprites import SpritesCreator
 from random import randrange, choice
 from pygame import Rect
 from abc import ABCMeta, abstractmethod
+from sound import Sounds
 
 sprites_creator = SpritesCreator()
+sounds = Sounds()
 
 width = height = 32
 
@@ -13,6 +15,7 @@ def spawn_random():
           randrange(1, 11, 3) * height + height // 2
     power_up = choice(PowerUp.__subclasses__())
     bonus = power_up(pos)
+    sounds.bonus_appears.play()
     return bonus
 
 
@@ -40,6 +43,7 @@ class Star(PowerUp):
         super().__init__(pos, image)
 
     def perform(self, player, enemies, explosion_queue):
+        sounds.star_bonus.play()
         player.upgrade()
 
 
@@ -49,6 +53,7 @@ class Grenade(PowerUp):
         super().__init__(pos, image)
 
     def perform(self, player, enemies, explosion_queue):
+        sounds.grenade_bonus.play()
         self.explode(enemies, explosion_queue)
 
     @staticmethod
@@ -59,11 +64,11 @@ class Grenade(PowerUp):
             enemies.remove(enemy)
 
 
-
 class HP(PowerUp):
     def __init__(self, pos):
         image = sprites_creator.health()
         super().__init__(pos, image)
 
     def perform(self, player, enemies, explosion_queue):
+        sounds.hp_bonus.play()
         player.increase_hp()
