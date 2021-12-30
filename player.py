@@ -14,7 +14,7 @@ class Player(Tank):
         self._is_steel_destroyable = False
 
         super().__init__(direction=Direction.Up, is_player=True,
-                         images=images, position=(144, 382))
+                         images=images, position=(128, 384))
 
     def try_pickup_bonus(self, bonus, enemies, explosion_queue):
         player_rect = Rect(self.position[0], self.position[1], self.rect.width, self.rect.height)
