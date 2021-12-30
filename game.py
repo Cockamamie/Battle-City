@@ -130,7 +130,7 @@ class Game:
 
             for i in explosion_queue[0]:
                 window.blit(i[0], i[1])
-            del explosion_queue[0]
+            explosion_queue.pop(0)
             explosion_queue.append([])
 
             if bonus is not None:
@@ -138,7 +138,9 @@ class Game:
                     window.blit(bonus.image, bonus.position)
                 pickup_res = player.try_pickup_bonus(bonus, enemies, explosion_queue)
                 if pickup_res:
+                    bonus.on_pickup(player)
                     bonus = None
+
             pygame.display.update()
             clock.tick(60)
         pygame.quit()
