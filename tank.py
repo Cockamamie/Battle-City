@@ -108,11 +108,11 @@ class Tank:
     def take_damage(self, explosion_queue, enemies, index):
         self._health -= 100
         if self._health <= 0:
-            self.destroy_enemy_sound.play()
             self.blow_up(explosion_queue)
             self.destroy(enemies, index)
 
     def blow_up(self, explosion_queue):
+        self.destroy_enemy_sound.play()
         x, y = self.position[0], self.position[1]
         sc = SpritesCreator()
         blasts = [sc.small_blast, sc.medium_blast, sc.large_blast]
