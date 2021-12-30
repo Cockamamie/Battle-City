@@ -120,11 +120,14 @@ class Bullet:
                     intersecting_tank.is_bonus = False
                 else:
                     spawn_bonus = False
-                if intersecting_tank.is_player or self.belongs_player:
+                if self.belongs_player:
                     for e in tanks:
                         if e.position == intersecting_tank.position:
                             intersecting_tank.take_damage(explosion_queue, enemies,
                                                           intersecting_tanks_index)
+                elif intersecting_tank.is_player:
+                    intersecting_tank.reset()
+                    intersecting_tank.blow_up(explosion_queue)
                 else:
                     blow_up_bullet = False
                     erase_bullet = False
