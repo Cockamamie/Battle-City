@@ -55,9 +55,10 @@ class Eagle(pygame.sprite.Sprite):
         pygame.sprite.Sprite.__init__(self)
         self.image = SpritesCreator() .eagle()
         self.rect = Rect((192, 384), (32, 32))
+        self.is_destroyed = False
 
     def defeat(self):
-        #закончить игру
+        self.is_destroyed = True
         self.image = SpritesCreator().flag()
 
     def blow_up(self, explosion_queue):
