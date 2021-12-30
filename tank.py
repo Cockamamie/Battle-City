@@ -7,7 +7,7 @@ width = height = 32
 
 
 class Tank:
-    def __init__(self, images: dict[Direction, Surface], health=100,
+    def __init__(self, images, health=100,
                  velocity=MovingSpeed.Default.value,
                  shouting_speed=ShootingSpeed.Default.value,
                  direction=Direction.Down, position=(0, 0), is_player=False):
@@ -100,12 +100,6 @@ class Tank:
         self._position = tuple(self.__get_next_pos(direction, obstacles, enemies))
         self._direction = direction
         self._image = self.images[direction]
-
-    def take_damage(self, explosion_queue, enemies, index):
-        self._health -= 100
-        if self._health <= 0:
-            self.blow_up(explosion_queue)
-            self.destroy(enemies, index)
 
     def blow_up(self, explosion_queue):
         x, y = self.position[0], self.position[1]

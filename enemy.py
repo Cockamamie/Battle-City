@@ -16,6 +16,13 @@ class Enemy(Tank):
         self._bonus_index = 0
         self.timer = timer()
 
+    def take_damage(self, explosion_queue, enemies, index, player):
+        self._health -= 100
+        if self._health <= 0:
+            self.blow_up(explosion_queue)
+            self.destroy(enemies, index)
+            player.score += self.points
+
     def is_bonus(self):
         return self.is_bonus
 
