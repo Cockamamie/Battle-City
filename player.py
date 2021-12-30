@@ -2,8 +2,10 @@ from Assets.sprites import SpritesCreator
 from enums import Direction, MovingSpeed, ShootingSpeed
 from tank import Tank
 from pygame import Rect
+from sound import Sounds
 
 sprites_creator = SpritesCreator()
+sounds = Sounds()
 
 
 class Player(Tank):
@@ -12,7 +14,8 @@ class Player(Tank):
         self._stars = 0
         self._hp = 3
         self._is_steel_destroyable = False
-
+        self.destroy_sound = sounds.destroy_player
+        self.fire_sound = sounds.fire
         super().__init__(direction=Direction.Up, is_player=True,
                          images=images, position=(128, 384))
 
@@ -25,6 +28,7 @@ class Player(Tank):
         return True
 
     def fire(self, bullets):
+        self.fire_sound.play()
         self.shoot(bullets, self._is_steel_destroyable)
 
     def upgrade(self):
@@ -49,4 +53,5 @@ class Player(Tank):
         self._hp -= 1
 
     def reset(self):
+        self.destroy_sound.play()
         pass
