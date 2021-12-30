@@ -8,13 +8,12 @@ class Enemy(Tank):
                  velocity: int = 2, shouting_speed: int = 2,
                  is_bonus=False):
         super().__init__(images, health, velocity, shouting_speed, position=position)
-        self._is_bonus = is_bonus
+        self.is_bonus = is_bonus
         self._bonus_images = bonus_images
         self._bonus_index = 0
 
-    @property
     def is_bonus(self):
-        return self._is_bonus
+        return self.is_bonus
 
     def set_random_direction(self):
         self._direction = choice(list(Direction))
