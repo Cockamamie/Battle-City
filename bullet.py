@@ -4,7 +4,7 @@ from pygame import Rect
 import tank
 from enums import Direction
 from Assets.sprites import SpritesCreator
-from landscape import Brick, Steel
+from landscape import Brick, Steel, Eagle
 
 
 class Bullet:
@@ -55,6 +55,7 @@ class Bullet:
         explosion_queue[2].append(((SpritesCreator().large_blast()), (x, y)))
 
     def move(self, obstacles, enemies, bullets, explosion_queue, player):
+        spawn_bonus = False
         tanks = enemies + [player]
         blow_up_bullet = True
         erase_bullet = True
@@ -62,12 +63,16 @@ class Bullet:
         self.__position = tuple([x + y for x, y in zip(self.position, delta_pos)])
         current_rect = Rect(self.position, (8, 8))
         intersecting_obs_list = [(i.rect.colliderect(current_rect) and
-                                  isinstance(i, (Brick,  Steel))) for i in obstacles]
+                                  isinstance(i, (Brick,  Steel, Eagle))) for i in obstacles]
         intersecting_obs_index = -1
         shift = 0
         for i in range(len(intersecting_obs_list)):
             if intersecting_obs_list[i]:
                 intersecting_obs_index = 0
+                if isinstance(obstacles[i - shift], Eagle):
+                    obstacles[i - shift].blow_up(explosion_queue)
+                    obstacles[i - shift].defeat()
+                    continue
                 if isinstance(obstacles[i - shift], Steel) and not self.__is_steel_destroyable:
                     continue
                 obstacles[i - shift].kill()
@@ -115,6 +120,11 @@ class Bullet:
                         intersecting_tanks_index = i
                         break
                 intersecting_tank = tanks[intersecting_tanks_index]
+                if self.belongs_player and intersecting_tank.is_bonus:
+                    spawn_bonus = True
+                    intersecting_tank.is_bonus = False
+                else:
+                    spawn_bonus = False
                 if intersecting_tank.is_player or self.belongs_player:
                     for e in tanks:
                         if e.position == intersecting_tank.position:
@@ -130,3 +140,4 @@ class Bullet:
                         break
             if blow_up_bullet:
                 self.blow_up(explosion_queue)
+        return spawn_bonus
