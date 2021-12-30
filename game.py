@@ -70,8 +70,7 @@ class Game:
 
         return current_direction
 
-    def iter_events(self, game_helper, water_switch, bonus_tank_switch,
-                    enemy_spawn, bonus_blink):  # spawn power ups?
+    def iter_events(self, game_helper):  # spawn power ups?
         global bonus
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -109,11 +108,10 @@ class Game:
         player = Player()
         game_helper.spawn_enemies(enemies)
 
-        bonus = spawn_random()
         while self.running:
             window.fill((0, 0, 0))
-            self.iter_events(game_helper, water_switch, bonus_tank_switch,
-                             enemy_spawn, bonus_blink)
+
+            self.iter_events(game_helper)
             lower.draw(window)
             window.blit(player.image, player.position)
 
