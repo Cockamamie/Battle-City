@@ -17,7 +17,7 @@ def spawn_random():
 
 
 class PowerUp:
-    __metaclass = ABCMeta
+    __metaclass__ = ABCMeta
 
     def __init__(self, pos, image):
         self.position = pos
@@ -30,7 +30,7 @@ class PowerUp:
         self.is_visible = not self.is_visible
 
     @abstractmethod
-    def perform(self, player, enemies):
+    def perform(self, player, enemies, explosion_queue):
         pass
 
 
@@ -39,7 +39,7 @@ class Star(PowerUp):
         image = sprites_creator.star()
         super().__init__(pos, image)
 
-    def perform(self, player, enemies):
+    def perform(self, player, enemies, explosion_queue):
         player.upgrade()
 
 
@@ -48,11 +48,16 @@ class Grenade(PowerUp):
         image = sprites_creator.grenade()
         super().__init__(pos, image)
 
-    def perform(self, player, enemies):
-        self.explode(enemies)
+    def perform(self, player, enemies, explosion_queue):
+        self.explode(enemies, explosion_queue)
 
-    def explode(self, enemies):
-        pass
+    @staticmethod
+    def explode(enemies, explosion_queue):
+        copy = list(enemies)
+        for enemy in copy:
+            enemy.blow_up(explosion_queue)
+            enemies.remove(enemy)
+
 
 
 class HP(PowerUp):
@@ -60,5 +65,5 @@ class HP(PowerUp):
         image = sprites_creator.health()
         super().__init__(pos, image)
 
-    def perform(self, player, enemies):
+    def perform(self, player, enemies, explosion_queue):
         player.increase_hp()

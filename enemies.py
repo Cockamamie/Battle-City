@@ -1,6 +1,6 @@
 from Assets.sprites import SpritesCreator
 from enemy import Enemy
-from enums import Color
+from enums import Color, MovingSpeed, ShootingSpeed
 
 sprites_creator = SpritesCreator()
 
@@ -9,7 +9,7 @@ class Common(Enemy):
     def __init__(self, position, is_bonus):
         images = sprites_creator.common_enemy()
         bonus_images = sprites_creator.common_enemy(Color.Red)
-        super().__init__(velocity=1, images=images, position=position,
+        super().__init__(velocity=MovingSpeed.Slow.value, images=images, position=position,
                          bonus_images=bonus_images, is_bonus=is_bonus)
 
     @property
@@ -24,7 +24,7 @@ class Fast(Enemy):
     def __init__(self, position, is_bonus):
         images = sprites_creator.fast_enemy()
         bonus_images = sprites_creator.fast_enemy(Color.Red)
-        super().__init__(velocity=3, images=images, position=position,
+        super().__init__(velocity=MovingSpeed.Fast.value, images=images, position=position,
                          bonus_images=bonus_images, is_bonus=is_bonus)
 
     @property
@@ -39,7 +39,7 @@ class RapidFire(Enemy):
     def __init__(self, position, is_bonus):
         images = sprites_creator.rapid_enemy()
         bonus_images = sprites_creator.rapid_enemy(Color.Red)
-        super().__init__(shouting_speed=3, images=images, position=position,
+        super().__init__(shouting_speed=ShootingSpeed.Fast.value, images=images, position=position,
                          bonus_images=bonus_images, is_bonus=is_bonus)
 
     @property
@@ -79,8 +79,6 @@ class Armored(Enemy):
             images = sprites_creator.armored_enemy(Color.Gray)
         self.images = [images, self._bonus_images][self._bonus_index]
 
-    def take_damage(self, explosion_queue, enemies, index, player):
-        super().take_damage(explosion_queue, enemies, index, player)
+    def take_damage(self, explosion_queue, enemies, index):
+        super().take_damage(explosion_queue, enemies, index)
         self.handle_sprite()
-
-

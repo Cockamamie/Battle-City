@@ -4,6 +4,11 @@ from enums import Direction
 from game_helper import Level, GameHelper
 import landscape
 from power_ups import spawn_random
+from timeit import default_timer as timer
+
+pygame.init()
+
+shoot_timer = timer()
 
 lower = pygame.sprite.Group()
 medium = pygame.sprite.Group()
@@ -15,6 +20,17 @@ enemies = []
 bonus = None
 explosion_queue = [[] for i in range(4)]
 clock = pygame.time.Clock()
+
+water_switch = pygame.USEREVENT + 1
+bonus_tank_switch = pygame.USEREVENT + 2
+enemy_spawn = pygame.USEREVENT + 3
+bonus_blink = pygame.USEREVENT + 4
+shoot_cool_down = pygame.USEREVENT + 5
+pygame.time.set_timer(water_switch, 750)
+pygame.time.set_timer(bonus_tank_switch, 250)
+pygame.time.set_timer(enemy_spawn, 3000)
+pygame.time.set_timer(bonus_blink, 200)
+pygame.time.set_timer(shoot_cool_down, 200)
 
 
 class Game:
@@ -46,13 +62,15 @@ class Game:
         elif keys[pygame.K_DOWN]:
             player.move(Direction.Down, obstacles, enemies)
             current_direction = Direction.Down
-        if keys[pygame.K_SPACE]:
+
+        global shoot_timer
+        if keys[pygame.K_SPACE] and timer() - shoot_timer > 0.3:
             player.fire(bullets)
+            shoot_timer = timer()
 
         return current_direction
 
-    def iter_events(self, game_helper, water_switch, bonus_tank_switch,
-                    enemy_spawn, bonus_blink):  # spawn power ups?
+    def iter_events(self, game_helper):  # spawn power ups?
         global bonus
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -74,18 +92,9 @@ class Game:
     def run(self):
         global bonus
         lvl = 1
-        pygame.init()
         window = pygame.display.set_mode((self.width, self.height))
         pygame.display.set_caption("Battle City")
         game_helper = GameHelper(lvl)
-        water_switch = pygame.USEREVENT + 1
-        bonus_tank_switch = pygame.USEREVENT + 2
-        enemy_spawn = pygame.USEREVENT + 3
-        bonus_blink = pygame.USEREVENT + 4
-        pygame.time.set_timer(water_switch, 750)
-        pygame.time.set_timer(bonus_tank_switch, 250)
-        pygame.time.set_timer(enemy_spawn, 3000)
-        pygame.time.set_timer(bonus_blink, 200)
         level_1 = Level(lvl).map
         for tile in level_1:
             if isinstance(tile, landscape.Grass):
@@ -99,11 +108,10 @@ class Game:
         player = Player()
         game_helper.spawn_enemies(enemies)
 
-        bonus = spawn_random()
         while self.running:
             window.fill((0, 0, 0))
-            self.iter_events(game_helper, water_switch, bonus_tank_switch,
-                             enemy_spawn, bonus_blink)
+
+            self.iter_events(game_helper)
             lower.draw(window)
             window.blit(player.image, player.position)
 
@@ -112,7 +120,7 @@ class Game:
                 bullet.move(obstacles, enemies, bullets, explosion_queue, player)
 
             for enemy in enemies:
-                enemy.step(obstacles, bullets, enemies + [player])
+                enemy.step(obstacles, bullets, enemies, player)
                 window.blit(enemy.image, enemy.position)
             current_direction = self.on_player_key_pressed(player, current_direction)
 
@@ -127,7 +135,7 @@ class Game:
             if bonus is not None:
                 if bonus.is_visible:
                     window.blit(bonus.image, bonus.position)
-                pickup_res = player.try_pickup_bonus(bonus, enemies)
+                pickup_res = player.try_pickup_bonus(bonus, enemies, explosion_queue)
                 if pickup_res:
                     bonus = None
 
