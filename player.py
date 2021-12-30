@@ -20,6 +20,10 @@ class Player(Tank):
         super().__init__(direction=Direction.Up, is_player=True,
                          images=images, position=self.start_pos)
 
+    @property
+    def hp(self):
+        return self._hp
+
     def try_pickup_bonus(self, bonus, enemies, explosion_queue):
         player_rect = Rect(self.position[0], self.position[1], self.rect.width, self.rect.height)
         intersecting = player_rect.colliderect(bonus.rect)
@@ -52,6 +56,11 @@ class Player(Tank):
     def decrease_hp(self):
         self._hp -= 1
 
+    def set_start_params(self):
+        self._position = self.start_pos
+        self._direction = Direction.Up
+        self._image = self.images[self.direction]
+
     def reset(self):
         self.decrease_hp()
         if self._hp == 0:
@@ -61,6 +70,4 @@ class Player(Tank):
         self._velocity = MovingSpeed.Default.value
         self.max_bullets_available = 1
         self._is_steel_destroyable = False
-        self._position = self.start_pos
-        self._direction = Direction.Up
-        self._image = self.images[self.direction]
+        self.set_start_params()
