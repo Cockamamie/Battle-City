@@ -57,8 +57,8 @@ class Player(Tank):
         if self._hp == 0:
             pass
         self._stars = 0
-        self.shouting_speed = ShootingSpeed.Default
-        self._velocity = MovingSpeed.Default
+        self.shouting_speed = ShootingSpeed.Default.value
+        self._velocity = MovingSpeed.Default.value
         self.max_bullets_available = 1
         self._is_steel_destroyable = False
         self._position = self.start_pos
