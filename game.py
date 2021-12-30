@@ -32,15 +32,21 @@ pygame.time.set_timer(enemy_spawn, 3000)
 pygame.time.set_timer(bonus_blink, 200)
 pygame.time.set_timer(shoot_cool_down, 200)
 
+game_helper = None
+player = None
+
 
 class Game:
     def __init__(self, width, height):
         self.width = width
         self.height = height
+        self.window = pygame.display.set_mode((width, height))
         self.running = True
+        self.game_over = False
+        self.lvl = 0
 
     @staticmethod
-    def on_player_key_pressed(player, current_direction):
+    def on_player_key_pressed(current_direction):
         keys = pygame.key.get_pressed()
         if keys[pygame.K_LEFT] and current_direction == Direction.Left:
             player.move(Direction.Left, obstacles, enemies)
@@ -70,8 +76,9 @@ class Game:
 
         return current_direction
 
-    def iter_events(self, game_helper):  # spawn power ups?
+    def iter_events(self):  # spawn power ups?
         global bonus
+        global game_helper
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 self.running = False
@@ -89,14 +96,38 @@ class Game:
                 if bonus is not None:
                     bonus.switch_visibility()
 
-    def run(self):
+    def iter_bullets(self):
         global bonus
-        lvl = 1
-        window = pygame.display.set_mode((self.width, self.height))
-        pygame.display.set_caption("Battle City")
-        game_helper = GameHelper(lvl)
-        level_1 = Level(lvl).map
-        for tile in level_1:
+        for bullet in bullets:
+            self.window.blit(bullet.image, bullet.position)
+            spawn_bonus = bullet.move(obstacles, enemies, bullets, explosion_queue, player)
+            if spawn_bonus:
+                bonus = spawn_random()
+
+    def iter_enemies(self):
+        for enemy in enemies:
+            enemy.step(obstacles, bullets, enemies, player)
+            self.window.blit(enemy.image, enemy.position)
+
+    def process_explosion(self):
+        for i in explosion_queue[0]:
+            self.window.blit(i[0], i[1])
+        explosion_queue.pop(0)
+        explosion_queue.append([])
+
+    def process_bonus(self):
+        global bonus
+        if bonus is not None:
+            if bonus.is_visible:
+                self.window.blit(bonus.image, bonus.position)
+            pickup_res = player.try_pickup_bonus(bonus, enemies, explosion_queue)
+            if pickup_res:
+                bonus.on_pickup(player)
+                bonus = None
+
+    def generate_map(self):
+        level = Level(self.lvl).map
+        for tile in level:
             if isinstance(tile, landscape.Grass):
                 upper.add(tile)
             elif isinstance(tile, landscape.Ice):
@@ -104,42 +135,55 @@ class Game:
             else:
                 obstacles.append(tile)
                 medium.add(tile)
-        current_direction = Direction.Down
-        player = Player()
+
+    def next_level(self):  # TODO set current direction outside this method
+        global game_helper
+        global obstacles
+        global enemies
+        lower.empty()
+        medium.empty()
+        upper.empty()
+        obstacles = []
+        enemies = []
+        player.set_start_params()
+        self.lvl = self.lvl + 1
+        game_helper = GameHelper(self.lvl)
+        self.generate_map()
         game_helper.spawn_enemies(enemies)
 
+    def process_run(self, current_direction):
+        lower.draw(self.window)
+        self.window.blit(player.image, player.position)
+
+        self.iter_events()
+        self.iter_bullets()
+        self.iter_enemies()
+
+        medium.draw(self.window)
+        upper.draw(self.window)
+
+        self.process_explosion()
+        self.process_bonus()
+        return self.on_player_key_pressed(current_direction)
+
+    def run(self):
+        global bonus
+        global player
+        pygame.display.set_caption("Battle City")
+        current_direction = Direction.Up
+        player = Player()  # If game over
+        self.next_level()
+        game_helper.spawn_enemies(enemies)
         while self.running:
-            window.fill((0, 0, 0))
+            self.window.fill((0, 0, 0))
 
-            self.iter_events(game_helper)
-            lower.draw(window)
-            window.blit(player.image, player.position)
+            current_direction = self.process_run(current_direction)
 
-            for bullet in bullets:
-                window.blit(bullet.image, bullet.position)
-                spawn_bonus = bullet.move(obstacles, enemies, bullets, explosion_queue, player)
-                if spawn_bonus:
-                    bonus = spawn_random()
-            for enemy in enemies:
-                enemy.step(obstacles, bullets, enemies, player)
-                window.blit(enemy.image, enemy.position)
-            current_direction = self.on_player_key_pressed(player, current_direction)
+            self.game_over = player.hp <= 0  # TODO: минус база
 
-            medium.draw(window)
-            upper.draw(window)
-
-            for i in explosion_queue[0]:
-                window.blit(i[0], i[1])
-            explosion_queue.pop(0)
-            explosion_queue.append([])
-
-            if bonus is not None:
-                if bonus.is_visible:
-                    window.blit(bonus.image, bonus.position)
-                pickup_res = player.try_pickup_bonus(bonus, enemies, explosion_queue)
-                if pickup_res:
-                    bonus.on_pickup(player)
-                    bonus = None
+            if len(game_helper.enemies_queue) + len(enemies) == 0:
+                self.next_level()
+                current_direction = Direction.Up
 
             pygame.display.update()
             clock.tick(60)
