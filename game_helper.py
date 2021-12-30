@@ -4,7 +4,7 @@ from typing import List
 from pygame import Rect
 
 from enemies import Common, Fast, RapidFire, Armored
-from landscape import Brick, Steel, Grass, Water, Ice
+from landscape import Brick, Steel, Grass, Water, Ice, Eagle
 
 
 class MapCreator:
@@ -19,7 +19,7 @@ class MapCreator:
         self.level_path = levels_path + f'/{level_number}.txt'
 
     def create_map(self, tile_size=16) -> list:
-        lvl_map= []
+        lvl_map = [Eagle()]
         with open(self.level_path, 'r') as lvl_data:
             for i, line in enumerate(lvl_data.readlines()):
                 for j, symbol in enumerate(line):
@@ -37,7 +37,8 @@ class EnemyQueueCreator:
     enemies_queue = [18 * [Common] + 2 * [Fast],
                      2 * [Armored] + 4 * [Fast] + 14 * [Common],
                      14 * [Common] + 4 * [Fast] + 2 * [Armored],
-                     10 * [RapidFire] + 5 * [Fast] + 2 * [Common] + 3 * [Armored]]
+                     10 * [RapidFire] + 5 * [Fast] + 2 * [Common] + 3 * [Armored],
+                     5 * [RapidFire] + 2 * [Armored] + 8 * [Common] + 5 * [Fast]]
 
     def generate_queue(self, level_num: int):
         return self.enemies_queue[level_num - 1]
