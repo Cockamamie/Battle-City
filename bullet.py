@@ -1,7 +1,4 @@
-import pygame
 from pygame import Rect
-
-import tank
 from enums import Direction
 from Assets.sprites import SpritesCreator
 from landscape import Brick, Steel
@@ -36,9 +33,6 @@ class Bullet:
     def owner(self):
         return self.__owner
 
-    # @property
-    # def velocity(self): return self.velocity
-
     @property
     def belongs_player(self):
         return self.__belongs_player
@@ -50,9 +44,10 @@ class Bullet:
     def blow_up(self, explosion_queue):
         x = self.position[0] - 12 if self.position[0] - 12 >= 0 else 0
         y = self.position[1] - 12 if self.position[1] - 12 >= 0 else 0
-        explosion_queue[0].append(((SpritesCreator().small_blast()), (x, y)))
-        explosion_queue[1].append(((SpritesCreator().medium_blast()), (x, y)))
-        explosion_queue[2].append(((SpritesCreator().large_blast()), (x, y)))
+        sc = SpritesCreator()
+        blasts = [sc.small_blast, sc.medium_blast, sc.large_blast]
+        for i in range(3):
+            explosion_queue[i].append((blasts[i](), (x, y)))
 
     def move(self, obstacles, enemies, bullets, explosion_queue, player):
         tanks = enemies + [player]
@@ -71,7 +66,7 @@ class Bullet:
                 if isinstance(obstacles[i - shift], Steel) and not self.__is_steel_destroyable:
                     continue
                 obstacles[i - shift].kill()
-                del obstacles[i - shift]
+                obstacles.pop(i - shift)
                 shift += 1
 
         not_own1 = []
@@ -102,10 +97,10 @@ class Bullet:
             if not(intersecting_bullet.belongs_player or self.belongs_player):
                 blow_up_bullet = False
             else:
-                del bullets[intersecting_bull_index]
+                bullets.pop(intersecting_bull_index)
                 for i in range(len(bullets)):
                     if bullets[i].position == self.position:
-                        del bullets[i]
+                        bullets.pop(i)
                         break
         if intersecting_obs_index + intersecting_tanks_index != -2 or \
                 not (0 <= self.position[0] < 409 and 0 <= self.position[1] < 409):
@@ -119,14 +114,14 @@ class Bullet:
                     for e in tanks:
                         if e.position == intersecting_tank.position:
                             intersecting_tank.take_damage(explosion_queue, enemies,
-                                                          intersecting_tanks_index, player)
+                                                          intersecting_tanks_index)
                 else:
                     blow_up_bullet = False
                     erase_bullet = False
             if erase_bullet:
                 for i in range(len(bullets)):
                     if self.position == bullets[i].position:
-                        del bullets[i]
+                        bullets.pop(i)
                         break
             if blow_up_bullet:
                 self.blow_up(explosion_queue)
