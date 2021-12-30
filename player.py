@@ -21,7 +21,7 @@ class Player(Tank):
         intersecting = player_rect.colliderect(bonus.rect)
         if not intersecting:
             return False
-        bonus.perform(self, enemies)
+        bonus.perform(self, enemies, explosion_queue)
         return True
 
     def fire(self, bullets):

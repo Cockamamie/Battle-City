@@ -135,7 +135,7 @@ class Game:
             if bonus is not None:
                 if bonus.is_visible:
                     window.blit(bonus.image, bonus.position)
-                pickup_res = player.try_pickup_bonus(bonus, enemies)
+                pickup_res = player.try_pickup_bonus(bonus, enemies, explosion_queue)
                 if pickup_res:
                     bonus = None
 
