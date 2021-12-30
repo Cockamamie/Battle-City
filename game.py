@@ -166,6 +166,17 @@ class Game:
         self.process_bonus()
         return self.on_player_key_pressed(current_direction)
 
+    def end_game(self):
+        global player
+        self.window.fill((0, 0, 0))
+        font = pygame.font.Font(pygame.font.get_default_font(), 36)
+        game_over = font.render('Game Over', True, (255, 255, 255))
+        score_message = font.render('Score:', True, (255, 255, 255))
+        score = font.render(f'{player.score}', True, (255, 255, 255))
+        self.window.blit(game_over, dest=(120, 100))
+        self.window.blit(score_message, dest=(150, 200))
+        self.window.blit(score, dest=(170, 250))
+
     def run(self):
         global bonus
         global player
@@ -176,10 +187,15 @@ class Game:
         game_helper.spawn_enemies(enemies)
         while self.running:
             self.window.fill((0, 0, 0))
-
             current_direction = self.process_run(current_direction)
 
-            self.game_over = player.hp <= 0  # TODO: минус база
+            eagle_dead = False
+            for obstacle in obstacles:
+                if isinstance(obstacle, landscape.Eagle) and obstacle.is_destroyed:
+                    eagle_dead = True
+            self.game_over = player.hp <= 0 or eagle_dead
+            if self.game_over:
+                self.end_game()
 
             if len(game_helper.enemies_queue) + len(enemies) == 0:
                 self.next_level()
