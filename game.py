@@ -13,7 +13,7 @@ obstacles = []
 bullets = []
 enemies = []
 bonus = None
-explosion_queue = [[] for i in range(4)]
+explosion_queue = [[] for i in range(8)]
 clock = pygame.time.Clock()
 
 
@@ -99,7 +99,6 @@ class Game:
         player = Player()
         game_helper.spawn_enemies(enemies)
 
-        bonus = spawn_random()
         while self.running:
             window.fill((0, 0, 0))
             self.iter_events(game_helper, water_switch, bonus_tank_switch,
@@ -109,8 +108,9 @@ class Game:
 
             for bullet in bullets:
                 window.blit(bullet.image, bullet.position)
-                bullet.move(obstacles, enemies, bullets, explosion_queue, player)
-
+                spawn_bonus = bullet.move(obstacles, enemies, bullets, explosion_queue, player)
+                if spawn_bonus:
+                    bonus = spawn_random()
             for enemy in enemies:
                 enemy.step(obstacles, bullets, enemies + [player])
                 window.blit(enemy.image, enemy.position)
@@ -130,7 +130,6 @@ class Game:
                 pickup_res = player.try_pickup_bonus(bonus, enemies)
                 if pickup_res:
                     bonus = None
-
             pygame.display.update()
             clock.tick(60)
         pygame.quit()
