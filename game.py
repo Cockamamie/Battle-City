@@ -130,7 +130,7 @@ class Game:
 
             for i in explosion_queue[0]:
                 window.blit(i[0], i[1])
-            del explosion_queue[0]
+            explosion_queue.pop(0)
             explosion_queue.append([])
 
             if bonus is not None:
