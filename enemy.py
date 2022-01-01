@@ -90,3 +90,11 @@ class Enemy(Tank):
         elif self.position != previous_pos:
             self.timer = timer()
         self.try_shoot(bullets)
+
+    def set_from_save(self, e):
+        self._health = e.health
+        self._direction = e.direction
+        self.max_bullets_available = e.max_bullets_available
+        self.is_bonus = e.is_bonus
+        self._bonus_index = e.bonus_index
+        self.timer = e.timer

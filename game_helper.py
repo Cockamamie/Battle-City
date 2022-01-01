@@ -76,3 +76,8 @@ class GameHelper:
         spawning_enemy = self.enemies_queue.pop(0)(pos, is_bonus)
 
         enemies.append(spawning_enemy)
+
+    def set_from_save(self, gh):
+        self.spawn_index = gh.spawn_index
+        self.enemies_spawned = gh.enemies_spawned
+        self.enemies_queue = gh.enemies_queue

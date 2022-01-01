@@ -76,3 +76,17 @@ class Player(Tank):
         self._is_steel_destroyable = False
         self.images = sprites_creator.no_stars_player()
         self.set_start_params()
+
+    def set_from_save(self, p):
+        self._health = p.health
+        self._velocity = p.velocity
+        self.shouting_speed = p.shouting_speed
+        self._direction = p.direction
+        self._position = p.position
+        self.max_bullets_available = p.max_bullets_available
+        self._stars = p.stars - 1
+        self._hp = p.hp
+        self._is_steel_destroyable = p.is_steel_destroyable
+        self.score = p.score
+        self.upgrade()
+        self._image = self.images[self.direction]

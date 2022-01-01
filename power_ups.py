@@ -40,6 +40,9 @@ class PowerUp:
     def perform(self, player, enemies, explosion_queue):
         pass
 
+    def set_from_save(self, bonus):
+        self.is_visible = bonus.is_visible
+
 
 class Star(PowerUp):
     def __init__(self, pos):
