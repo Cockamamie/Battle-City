@@ -24,6 +24,10 @@ class Enemy(Tank):
     def points(self):
         pass
 
+    @property
+    def bonus_index(self):
+        return self._bonus_index
+
     def take_damage(self, explosion_queue, enemies, index, player):
         self._health -= 100
         if self._health <= 0:
