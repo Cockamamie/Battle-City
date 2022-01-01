@@ -5,6 +5,7 @@ from game_helper import MapCreator, GameHelper
 import landscape
 from power_ups import spawn_random
 from timeit import default_timer as timer
+from saves import save, load
 
 pygame.init()
 
@@ -47,6 +48,7 @@ class Game:
 
     @staticmethod
     def on_player_key_pressed(current_direction):
+        global game_helper, bonus
         keys = pygame.key.get_pressed()
         if keys[pygame.K_LEFT] and current_direction == Direction.Left:
             player.move(Direction.Left, obstacles, enemies)
@@ -68,6 +70,12 @@ class Game:
         elif keys[pygame.K_DOWN]:
             player.move(Direction.Down, obstacles, enemies)
             current_direction = Direction.Down
+
+        if keys[pygame.K_F1]:
+            save(player, enemies, game_helper, bullets, obstacles, bonus)
+        elif keys[pygame.K_F3]:
+            game_helper, bonus = \
+                load(player, enemies, bullets, obstacles, medium)
 
         global shoot_timer
         if keys[pygame.K_SPACE] and timer() - shoot_timer > 0.3:
