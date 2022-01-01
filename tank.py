@@ -25,7 +25,6 @@ class Tank:
         self._rect = self.image.get_rect()
         self.max_bullets_available = 1
         self._stars = 0
-        self.destroy_enemy_sound = sounds.destroy_enemy
 
     # region Properties
     @property
@@ -105,12 +104,6 @@ class Tank:
         self._direction = direction
         self._image = self.images[direction]
 
-    def take_damage(self, explosion_queue, enemies, index):
-        self._health -= 100
-        if self._health <= 0:
-            self.blow_up(explosion_queue)
-            self.destroy(enemies, index)
-
     def blow_up(self, explosion_queue):
         rect = Rect(self.position[0], self.position[1],
                     self.rect.width, self.rect.height)
@@ -125,6 +118,7 @@ class Tank:
             explosion_queue[i].append((blasts[2](), (x - 16, y - 16)))
         for i in range(12, 16):
             explosion_queue[i].append((blasts[3](), (x - 32, y - 32)))
+        sounds.destroy_enemy.play()
 
     @staticmethod
     def destroy(enemies, index):
