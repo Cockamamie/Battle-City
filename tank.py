@@ -24,7 +24,6 @@ class Tank:
         self._image = images[direction]
         self._rect = self.image.get_rect()
         self.max_bullets_available = 1
-        self._stars = 0
 
     # region Properties
     @property
