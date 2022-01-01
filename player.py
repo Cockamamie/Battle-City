@@ -26,6 +26,14 @@ class Player(Tank):
     def hp(self):
         return self._hp
 
+    @property
+    def stars(self):
+        return self._stars
+
+    @property
+    def is_steel_destroyable(self):
+        return self._is_steel_destroyable
+
     def try_pickup_bonus(self, bonus, enemies, explosion_queue):
         player_rect = Rect(self.position[0], self.position[1], self.rect.width, self.rect.height)
         intersecting = player_rect.colliderect(bonus.rect)
