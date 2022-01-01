@@ -11,10 +11,10 @@ class Brick(pygame.sprite.Sprite):
         pygame.sprite.Sprite.__init__(self)
         self.image = SpritesCreator().brick()
         self.rect = rect
-        self.sound = sounds.brick
 
     def kill(self) -> None:
         pygame.sprite.Sprite.kill(self)
+        sounds.brick.play()
 
 
 class Steel(pygame.sprite.Sprite):
@@ -22,11 +22,10 @@ class Steel(pygame.sprite.Sprite):
         pygame.sprite.Sprite.__init__(self)
         self.image = SpritesCreator().steel()
         self.rect = rect
-        self.sound = sounds.steel
 
     def kill(self) -> None:
         pygame.sprite.Sprite.kill(self)
-        self.sound.play()
+        sounds.steel.play()
 
 
 class Grass(pygame.sprite.Sprite):
@@ -59,15 +58,14 @@ class Ice(pygame.sprite.Sprite):
 class Eagle(pygame.sprite.Sprite):
     def __init__(self):
         pygame.sprite.Sprite.__init__(self)
-        self.image = SpritesCreator() .eagle()
+        self.image = SpritesCreator().eagle()
         self.rect = Rect((192, 384), (32, 32))
         self.is_destroyed = False
-        self.sound = sounds.destroy_eagle
 
     def defeat(self):
         self.is_destroyed = True
         self.image = SpritesCreator().flag()
-        self.sound.play()
+        sounds.destroy_eagle.play()
 
     def blow_up(self, explosion_queue):
         x, y = self.rect.center

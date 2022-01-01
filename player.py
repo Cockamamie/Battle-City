@@ -17,8 +17,6 @@ class Player(Tank):
         self._stars = 0
         self._hp = 3
         self._is_steel_destroyable = False
-        self.destroy_sound = sounds.destroy_player
-        self.fire_sound = sounds.fire
         self.score = 0
 
         super().__init__(direction=Direction.Up, is_player=True,
@@ -37,7 +35,7 @@ class Player(Tank):
         return True
 
     def fire(self, bullets):
-        self.fire_sound.play()
+        sounds.fire.play()
         self.shoot(bullets, self._is_steel_destroyable)
 
     def upgrade(self):
@@ -67,7 +65,7 @@ class Player(Tank):
         self._image = self.images[self.direction]
 
     def reset(self):
-        self.destroy_sound.play()
+        sounds.destroy_player.play()
         self.decrease_hp()
         if self._hp == 0:
             pass

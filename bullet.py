@@ -87,11 +87,7 @@ class Bullet:
                     obstacles[i - shift].defeat()
                     continue
                 if isinstance(obstacles[i - shift], Steel) and not self.__is_steel_destroyable:
-                    if self.belongs_player:
-                        obstacles[i - shift].sound.play()
                     continue
-                if self.belongs_player:
-                    obstacles[i - shift].sound.play()
                 obstacles[i - shift].kill()
                 obstacles.pop(i - shift)
                 shift += 1
