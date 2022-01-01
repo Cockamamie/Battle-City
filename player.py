@@ -42,13 +42,13 @@ class Player(Tank):
         if self._stars == 4:
             return
         self._stars += 1
-        if self._stars == 1:
+        if self._stars > 0:
             self.images = sprites_creator.one_star_player()
             self.shouting_speed = ShootingSpeed.Fast.value
-        if self._stars == 2:
+        if self._stars > 1:
             self.max_bullets_available = 2
             self.images = sprites_creator.two_stars_player()
-        if self._stars == 3:
+        if self._stars > 2:
             self.images = sprites_creator.three_stars_player()
             self._is_steel_destroyable = True
 
