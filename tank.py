@@ -24,6 +24,7 @@ class Tank:
         self._image = images[direction]
         self._rect = self.image.get_rect()
         self.max_bullets_available = 1
+        self.frozen = False
 
     # region Properties
     @property
@@ -99,6 +100,8 @@ class Tank:
         return position
 
     def move(self, direction: Direction, obstacles, enemies):
+        if self.frozen:
+            return
         self._position = tuple(self.__get_next_pos(direction, obstacles, enemies))
         self._direction = direction
         self._image = self.images[direction]
@@ -125,6 +128,8 @@ class Tank:
             enemies.pop(index)
 
     def shoot(self, bullets, is_steel_destroyable=False):
+        if self.frozen:
+            return
         bullet_width = bullet_height = 8
         bullet_pos_shift = {Direction.Up: ((width - bullet_width) // 2, 0),
                             Direction.Right: (width, (height - bullet_height) // 2),
