@@ -161,6 +161,9 @@ class Game:
         enemies = []
         player.set_start_params()
         self.lvl = self.lvl + 1
+        if self.lvl > 5:
+            self.end_game(True)
+            return
         game_helper = GameHelper(self.lvl)
         self.generate_map()
         game_helper.spawn_enemies(enemies, player)
@@ -180,14 +183,27 @@ class Game:
         self.process_bonus()
         return self.on_player_key_pressed(current_direction)
 
-    def end_game(self):
+    @staticmethod
+    def freeze_all():
+        for enemy in enemies:
+            enemy.frozen = True
+        for bullet in bullets:
+            bullet.frozen = True
+        player.frozen = True
+
+    def end_game(self, won):
         global player
+        self.freeze_all()
         self.window.fill((0, 0, 0))
         font = pygame.font.Font(pygame.font.get_default_font(), 36)
-        game_over = font.render('Game Over', True, (255, 255, 255))
-        score_message = font.render('Score:', True, (255, 255, 255))
-        score = font.render(f'{player.score}', True, (255, 255, 255))
-        self.window.blit(game_over, dest=(120, 100))
+        white = (255, 255, 255)
+        if won:
+            end_message = font.render('You Win', True, white)
+        else:
+            end_message = font.render('Game Over', True, white)
+        score_message = font.render('Score:', True, white)
+        score = font.render(f'{player.score}', True, white)
+        self.window.blit(end_message, dest=(120, 100))
         self.window.blit(score_message, dest=(150, 200))
         self.window.blit(score, dest=(170, 250))
 
@@ -208,12 +224,7 @@ class Game:
                     eagle_dead = True
             self.game_over = player.hp <= 0 or eagle_dead
             if self.game_over:
-                for e in enemies:
-                    e.frozen = True
-                for e in bullets:
-                    e.frozen = True
-                player.frozen = True
-                self.end_game()
+                self.end_game(False)
 
             if len(game_helper.enemies_queue) + len(enemies) == 0:
                 self.next_level()
