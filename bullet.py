@@ -24,6 +24,7 @@ class Bullet:
         self.rect = self.image.get_rect()
         self.blasts = [sprites_creator.small_blast(),
                        sprites_creator.medium_blast()]
+        self.frozen = False
 
     @property
     def direction(self):
@@ -68,6 +69,8 @@ class Bullet:
             explosion_queue[i].append((blasts[2](), (x, y)))
 
     def move(self, obstacles, enemies, bullets, explosion_queue, player):
+        if self.frozen:
+            return False
         spawn_bonus = False
         tanks = enemies + [player]
         blow_up_bullet = True
