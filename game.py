@@ -99,7 +99,13 @@ class Game:
                     if enemy.is_bonus:
                         enemy.switch_sprite()
             elif event.type == enemy_spawn:
+                bonus_enemy_exists = False
                 game_helper.spawn_enemies(enemies, player)
+                for enemy in enemies:
+                    if enemy.is_bonus:
+                        bonus_enemy_exists = True
+                if bonus_enemy_exists:
+                    bonus = None
             elif event.type == bonus_blink:
                 if bonus is not None:
                     bonus.switch_visibility()
