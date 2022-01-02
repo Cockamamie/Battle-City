@@ -43,8 +43,10 @@ class Player(Tank):
         return True
 
     def fire(self, bullets):
-        sounds.fire.play()
+        if self.frozen:
+            return
         self.shoot(bullets, self._is_steel_destroyable)
+        sounds.fire.play()
 
     def upgrade(self):
         if self._stars == 4:
