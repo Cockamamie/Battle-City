@@ -202,6 +202,11 @@ class Game:
                     eagle_dead = True
             self.game_over = player.hp <= 0 or eagle_dead
             if self.game_over:
+                for e in enemies:
+                    e.frozen = True
+                for e in bullets:
+                    e.frozen = True
+                player.frozen = True
                 self.end_game()
 
             if len(game_helper.enemies_queue) + len(enemies) == 0:
